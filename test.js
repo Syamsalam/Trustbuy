@@ -1,18 +1,17 @@
 const { PrismaClient } = require('@prisma/client');
 const PostService = require('./services/post');
 const UserService = require('./services/user');
+const PaymentService = require('./services/payment');
 const prisma = new PrismaClient()
 
 const test = async (id) => {
-    const post = await UserService.getUser(id)
-    console.log(post)
+    const post = await PaymentService.pendapatanApp(id)
+    
+    console.info(post.data)
 }
 
-const body = {
-    judul: "ini judul",
-    deskripsi: "ini deskripsi",
-    lokasi: "ini lokasi",
-    aktif: "aktif"
+const user = {
+    id: 6,
 }
 
-test(3)
+test(user)

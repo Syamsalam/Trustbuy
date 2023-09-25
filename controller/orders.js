@@ -24,7 +24,7 @@ class OrderController {
 
     static UpdateOrder = roleValidations(1, async (req,res,next) => {
         try {
-            const order = await OrderService.editOrder(req.user);
+            const order = await OrderService.editOrder(req.user,req.body);
             return handleServerResponse(res,order.status,order.message,order.data);
         } catch (err) {
             next(err)

@@ -62,16 +62,37 @@ class OrderService {
         }
     }
 
+    static async createPayment(id,_data) {
+        try{
+
+            const payment = await prisma.orders.update({
+                where: {
+                    id: Number(id)
+                },
+                data: {
+                    payment: _data
+                }
+                
+            })
+
+            return{
+                status : 200,
+                message: "Berhasil menambahkan payment",
+                data: payment
+            }
+        } catch(err) {
+
+        }
+    }
+
     //ini ke jastip
-    static async editOrder(user) {
+    static async editOrder(id,_data) {
         try {
             const order = await prisma.orders.update({
                 where: {
-                    id: Number(user.id)
+                    id: Number(id)
                 },
-                data: {
-                    shipping_address: user.shipping_address
-                }
+                data: _data
             })
             return {
                 status: 200,

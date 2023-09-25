@@ -102,7 +102,7 @@ model user_details {
 
 model users {
   id                               Int             @id @default(autoincrement())
-  username                         String          @db.VarChar(50)
+  username                         String          @unique @db.VarChar(50)
   password                         String          @db.VarChar(255)
   email                            String          @db.VarChar(100)
   role_id                          Int

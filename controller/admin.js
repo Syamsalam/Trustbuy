@@ -82,6 +82,15 @@ class AdminController {
         }
     })
 
+    static allPostUser = roleValidations(3,async (req,res,next) => {
+        try{
+            const post = await PostService.getAllPost();
+            return handleServerResponse(res,post.status,post.message,post.data);
+        } catch (err) {
+            next(err);
+        }
+    })
+
 }
 
 module.exports = AdminController
