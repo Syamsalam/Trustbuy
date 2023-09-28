@@ -15,6 +15,8 @@ class JastipController {
 
     static createpost = roleValidations(3,async (req,res,next) => {
         try{
+            console.log(req.user)
+            console.log(req.body)
             const jastip = await PostService.createPost(req.body,req.user);
             return handleServerResponse(res,jastip.status,jastip.message,jastip.data);
         } catch (err) {

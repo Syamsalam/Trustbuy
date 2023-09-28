@@ -2,8 +2,8 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 class PostService {
-    static async createPost(_data,users) {
-        try{
+    static async createPost(_data, users) {
+        try {
 
             const user = await prisma.users.findUnique({
                 where: {
@@ -12,7 +12,7 @@ class PostService {
             })
 
             _data.user_id = Number(user.id)
-            
+
             const post = await prisma.jastiper_post.create({
                 data: _data
             })
@@ -30,8 +30,8 @@ class PostService {
         }
     }
 
-    static async updatePost(_data,post_id) {
-        try{           
+    static async updatePost(_data, post_id) {
+        try {
 
             const post = await prisma.jastiper_post.update({
                 where: {
@@ -74,8 +74,8 @@ class PostService {
         }
     }
 
-    static async getPost(user){
-        try{
+    static async getPost(user) {
+        try {
             const post = await prisma.jastiper_post.findMany({
                 where: {
                     user_id: Number(user.id)
@@ -96,7 +96,7 @@ class PostService {
     }
 
     static async getAllPost() {
-        try{
+        try {
             const post = await prisma.jastiper_post.findMany()
             return {
                 status: 200,
@@ -114,18 +114,47 @@ class PostService {
 
     static async getPostByStatus() {
         try {
-            const post = await prisma.jastiper_post.findMany({
+            const user = await prisma.jastiper_post.findMany({
                 where: {
                     aktif: "aktif"
+
+                },  
+                include: {
+                    users: {
+                        select: {
+                            
+                            user_details: {
+                                select: {
+                                    nama : true,
+                                    nomor_telepon: true
+                                }
+                            },
+                            image: {
+                                select: {
+                                    image: true
+                                }
+                            }
+                        }
+                    }
+
                 },
             })
-            
+
+
+
+            // const post = await prisma.jastiper_post.findMany({
+            //     where: {
+            //         aktif: "aktif"
+            //     }
+            // })
+
             return {
                 status: 200,
                 message: "Berhasil Mendapat seluruh post aktif",
-                data: post
+                data: user
             }
         } catch (err) {
+            console.log(err)
             return {
                 status: 500,
                 message: "Gagal Mendapat seluruh post aktif",

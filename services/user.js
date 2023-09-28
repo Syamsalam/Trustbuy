@@ -56,11 +56,62 @@ class UserService {
         }
     }
 
-    static async getProfile(user){
-        try{
-            const users = await prisma.user_details.findUnique({
+    static async getDetailProfile(user){
+        try {
+            console.log(user)
+            const users = await prisma.users.findUnique({
                 where: {
                     id: Number(user.id)
+                },
+                include: {
+                    user_details: true,
+                    image: {
+                        select: {
+                            image: true,
+                        }
+                    }
+                }
+            })
+
+            return {
+                status: 200,
+                message: "Berhasil Mendapatkan Data User",
+                data: users
+            }
+        } catch (err) {
+            return {
+                status: 500,
+                message: "Gagal Mendapatkan Data User",
+                data: err.message
+            }
+        }
+
+
+    }
+
+    static async getProfile(user){
+        try{
+
+            const idUser = await prisma.users.findFirst({
+                where: {
+                    id: Number(user.id)
+                }
+            })
+
+            const users = await prisma.user_details.findUnique({
+                where: {
+                    id: Number(idUser.user_details_id)
+                },
+                include: {
+                    users: {
+                        select: {
+                            image: {
+                                select: {
+                                    image: true
+                                }
+                            }
+                        }
+                    }
                 }
             })
             return {
@@ -112,14 +163,17 @@ class UserService {
         }
     }
 
-    static async editUser(user) {
+    static async editUser(user, data) {
         try{
+            console.log(user)
             const users = await prisma.users.update({
                 where: {
                     id: Number(user.id),
                     
                 },
-                data: _data
+                data: {
+                    ...data
+                }
             })
             return {
                 status: 200,

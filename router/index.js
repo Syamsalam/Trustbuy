@@ -44,11 +44,12 @@ router.post('/login', loginValidation, AuthController.login);
 // router.post('/images/upload-profile/:id', profileFile , ImageController.UploadProfile);
 
 //user
-router.put('/user/update-user', auth , UserController.UpdateUser);
-router.get('/user/history-user', auth ,HistoryController.HistoryUser);
-router.get('/user/history-user-detail', auth ,HistoryController.HistoryUserDetails);
-router.get('/user/get-post-aktif', auth,UserController.getPostByStatus);
+router.put('/user/update-user', auth , UserController.UpdateUser)
+router.get('/user/history-user', auth ,HistoryController.HistoryUser)
+router.get('/user/history-user-detail', auth ,HistoryController.HistoryUserDetails)
+router.get('/user/get-post-aktif', auth,UserController.getPostByStatus)
 router.get('/user/profile',auth,UserController.GetProfile)
+router.get('/user/detail-profile',auth,UserController.GetUserDetail)
 router.get('/user/get-post', auth,JastipController.getPost)
 
 //jastip

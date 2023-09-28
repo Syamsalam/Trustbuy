@@ -6,16 +6,16 @@ const PostService = require('../services/post');
 class UserController {
 
     //semua user
-    static GetUser = roleValidations(1, async (req, res , next) => {
+    static GetUserDetail = roleValidations(2, async (req, res , next) => {
         try{
-            const user = await UserService.getUser(req.params.id);
+            const user = await UserService.getDetailProfile(req.user);
             return handleServerResponse(res, user.status, user.message, user.data);
         }catch (err) {
             next(err)
         }
     })
 
-    static GetProfile = roleValidations(1, async (req,res,next) => {
+    static GetProfile = roleValidations(2, async (req,res,next) => {
         try{
             const profile = await UserService.getProfile(req.user);
             return handleServerResponse(res, profile.status, profile.message, profile.data);
@@ -35,9 +35,9 @@ class UserController {
     })
 
     //semua user
-    static UpdateUser = roleValidations(1, async (req, res , next) => {
+    static UpdateUser = roleValidations(3, async (req, res , next) => {
         try{
-            const user = await UserService.editUser(req.user);
+            const user = await UserService.editUser(req.user, req.body);
             return handleServerResponse(res, user.status, user.message, user.data);
         }catch (err) {
             next(err)

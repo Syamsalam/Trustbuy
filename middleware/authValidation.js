@@ -39,6 +39,7 @@ const registerValidation = (req, res, next) => {
 const roleValidations = (roleUser, callback) => {
     return async (req, res, next) => {
         const { role } = req.user;
+        console.log(req.user)
         if (role !== roleUser) {
             handleServerResponse(res, 401, "Unauthorized Access", "Kamu tidak memiliki akses untuk melakukan ini");
         } else {
