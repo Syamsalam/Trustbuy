@@ -1,26 +1,45 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 const { ImageBase64 } = require('../tools/index');
-
+const fs = require("fs")
 class ImageService {
 
     //ini semuanya bisa
     static async uploadProfile(file , user) {
         // const { id } = req.users
+
+        
+
         const image = file
+
         try {
-            const imageBase64 = await ImageBase64(image);
+
+            const curImage = await prisma.image.findFirst({
+                where : {
+                    users_id : Number(user.id)
+                }
+            })
+
+            console.log(curImage)
+
+            if(curImage != null) {
+                try {
+                    fs.unlinkSync("images/photoprofile/"+curImage.image)
+                }catch(err) {
+                    console.log(err)
+                }
+            }
             const users = await prisma.image.upsert({
                 where: {
                     users_id: Number(user.id),
                 },
                 update: {
-                    image: imageBase64
+                    image: image
                 },
                 create: {
                     users_id: Number(user.id),
                     jenis_image_id: Number(1),
-                    image: imageBase64
+                    image: image
                 }
             })
             return {

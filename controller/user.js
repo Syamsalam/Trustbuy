@@ -15,14 +15,14 @@ class UserController {
         }
     })
 
-    static GetProfile = roleValidations(2, async (req,res,next) => {
+    static async GetProfile(req,res) {
         try{
             const profile = await UserService.getProfile(req.user);
-            return handleServerResponse(res, profile.status, profile.message, profile.data);
+            return res.status(profile.status).json(profile.data);
         } catch (err) {
-            next(err)
+            res.status(500).json(err);
         }
-    })
+    }
 
     //semua user
     static CreateUser = roleValidations(1,async (req,res,next) => {
@@ -34,7 +34,7 @@ class UserController {
         }
     })
 
-    //semua user
+    // user
     static UpdateUser = roleValidations(2, async (req, res , next) => {
         try{
             const user = await UserService.editUser(req.user, req.body);

@@ -42,6 +42,24 @@ class JastipController {
         }
     })
 
+    static GetJastipDetails = roleValidations(3, async (req, res , next) => {
+        try{
+            const user = await JastipService.getDetailProfile(req.user);
+            return handleServerResponse(res, user.status, user.message, user.data);
+        }catch (err) {
+            next(err)
+        }
+    })
+
+    static UpdateJastip = roleValidations(3, async (req, res , next) => {
+        try{
+            const user = await JastipService.editJastip(req.user, req.body);
+            return handleServerResponse(res, user.status, user.message, user.data);
+        }catch (err) {
+            next(err)
+        }
+    })
+
     
 
 }

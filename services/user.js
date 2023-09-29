@@ -92,22 +92,20 @@ class UserService {
     static async getProfile(user){
         try{
 
-            const idUser = await prisma.users.findFirst({
+            const data = await prisma.users.findFirst({
                 where: {
                     id: Number(user.id)
-                }
-            })
-
-            const data = await prisma.user_details.findUnique({
-                where: {
-                    id: Number(idUser.user_details_id)
                 },
-                include: {
-                    users: {
-                        select: {
-                            image: {
+                select : {
+                    user_details : {
+                        include: {
+                            users: {
                                 select: {
-                                    image: true
+                                    image: {
+                                        select: {
+                                            image: true
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -116,12 +114,14 @@ class UserService {
             })
 
             
+
+            
             
 
             return {
                 status: 200,
                 message: "Data Profil user berhasil didapat",
-                data: data
+                data: data.user_details
             }
         } catch (err) {
             return {
@@ -169,20 +169,18 @@ class UserService {
 
     static async editUser(user, data) {
         try{
+            const idUser = user.id
             const user_details_update = data.user_details
-            console.log(user_details_update)
+            console.log(idUser)
 
             const users = await prisma.users.update({
                 where: {
-                    id: Number(user.id),
+                    id: Number(idUser)
                     
                 },
                 data: {
                     user_details: {
                         update: user_details_update
-                    },
-                    image: {
-                        update:data.image
                     }
                 }
             })

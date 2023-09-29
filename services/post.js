@@ -140,8 +140,6 @@ class PostService {
                 },
             })
 
-
-
             // const post = await prisma.jastiper_post.findMany({
             //     where: {
             //         aktif: "aktif"
@@ -160,6 +158,39 @@ class PostService {
                 message: "Gagal Mendapat seluruh post aktif",
                 data: null
             }
+        }
+    }
+
+    static async toggleAktifJastip(user) {
+        try {
+
+            const prev = await prisma.jastiper_post.findMany({
+                where: {
+                    users: Number(user.id)
+                },
+                select : {
+                    aktif : true
+                }
+            })
+
+            if(prev.length == null) return {
+                status : 404,
+                message : "",
+                data : null
+            }
+
+            await prisma.jastiper_post.update({
+                where : {
+                    user : Number(user.id)
+                },
+                data : {
+                    aktif : prev[0].aktif == "aktif" ? "non_aktif" : "aktif"
+                }
+            })
+            
+
+        } catch (err) {
+
         }
     }
 

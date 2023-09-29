@@ -64,27 +64,86 @@ class JastipService {
         }
     }
 
-    static async editJastip(_data,id) {
+    static async editJastip(user, data) {
         try{
-            const jastip = await prisma.users.update({
+            const idUser = user.id
+            const user_details_update = data.user_details
+            console.log(idUser)
+
+            const users = await prisma.users.update({
                 where: {
-                    id: Number(id)
+                    id: Number(idUser)
+                    
                 },
-                data: _data
+                data: {
+                    user_details: {
+                        update: user_details_update
+                    }
+                }
             })
+
+            const datas = await prisma.users.findUnique({
+                where: {
+                    id: Number(users.id)
+                },
+                include: {
+                    user_details: true
+                }
+            })
+
+            delete datas.password
+            delete datas.id
+            delete datas.role_id
+            delete datas.user_details_id
+            delete datas.user_details.data_identifikasi
+
             return {
                 status: 200,
-                message: "Berhasil Mengubah Data Jastip",
-                data: jastip
+                message: "Berhasil Mengubah Data User",
+                data: datas
             }
         } catch (err) {
             return{
                 status: 500,
-                message: "Gagal Mengubah Data Jastip",
-                data: err
+                message: "Gagal Mengubah Data User",
+                data: err.message
             }
         }
-    } 
+    }
+
+    static async getDetailProfile(user){
+        try {
+            console.log(user)
+            const users = await prisma.users.findUnique({
+                where: {
+                    id: Number(user.id)
+                },
+                include: {
+                    user_details: true,
+                    image: {
+                        select: {
+                            image: true,
+                        }
+                    }
+                }
+            })
+
+            return {
+                status: 200,
+                message: "Berhasil Mendapatkan Data User",
+                data: users
+            }
+        } catch (err) {
+            return {
+                status: 500,
+                message: "Gagal Mendapatkan Data User",
+                data: err.message
+            }
+        }
+
+
+    }
+
 }
 
 module.exports = JastipService;

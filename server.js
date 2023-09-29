@@ -14,7 +14,9 @@ server.use(express.urlencoded({
     extended: true
 }));
 
-server.use(cors());
+server.use(cors({
+    origin : "*"
+}));
 
 applyPassportStrategy(passport)
 server.use(passport.initialize());
