@@ -98,7 +98,7 @@ class UserService {
                 }
             })
 
-            const users = await prisma.user_details.findUnique({
+            const data = await prisma.user_details.findUnique({
                 where: {
                     id: Number(idUser.user_details_id)
                 },
@@ -114,10 +114,14 @@ class UserService {
                     }
                 }
             })
+
+            
+            
+
             return {
                 status: 200,
                 message: "Data Profil user berhasil didapat",
-                data: users
+                data: data
             }
         } catch (err) {
             return {
@@ -165,33 +169,56 @@ class UserService {
 
     static async editUser(user, data) {
         try{
-            console.log(user)
+            const user_details_update = data.user_details
+            console.log(user_details_update)
+
             const users = await prisma.users.update({
                 where: {
                     id: Number(user.id),
                     
                 },
                 data: {
-                    ...data
+                    user_details: {
+                        update: user_details_update
+                    },
+                    image: {
+                        update:data.image
+                    }
                 }
             })
+
+            const datas = await prisma.users.findUnique({
+                where: {
+                    id: Number(users.id)
+                },
+                include: {
+                    user_details: true
+                }
+            })
+
+            delete datas.password
+            delete datas.id
+            delete datas.role_id
+            delete datas.user_details_id
+            delete datas.user_details.data_identifikasi
+
             return {
                 status: 200,
                 message: "Berhasil Mengubah Data User",
-                data: users
+                data: datas
             }
         } catch (err) {
             return{
                 status: 500,
                 message: "Gagal Mengubah Data User",
-                data: err
+                data: err.message
             }
         }
     }
 
     static async deleteUser(user) {
         try{
-            const user = await prisma.users.delete({
+            const users = await prisma.users.delete({
                 where: {
                     id: Number(user.id)
                 }
@@ -199,7 +226,7 @@ class UserService {
             return({
                 status: 200,
                 message: "Berhasil Delete Data User",
-                data: user
+                data: users
             })
         } catch (err) {
             return{

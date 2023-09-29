@@ -35,7 +35,7 @@ class UserController {
     })
 
     //semua user
-    static UpdateUser = roleValidations(3, async (req, res , next) => {
+    static UpdateUser = roleValidations(2, async (req, res , next) => {
         try{
             const user = await UserService.editUser(req.user, req.body);
             return handleServerResponse(res, user.status, user.message, user.data);

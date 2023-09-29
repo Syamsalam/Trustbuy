@@ -50,7 +50,7 @@ class CommonSercive {
         try {
             const profile = await prisma.users.findUnique({
                 where: {
-                    id: user.id
+                    id: Number(user.id)
                 },
                 include: {
                     user_details: true
