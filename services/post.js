@@ -9,12 +9,16 @@ class PostService {
                 where: {
                     id: Number(users.id)
                 }
-            })
+             })
 
-            _data.user_id = Number(user.id)
+             let createdPost = _data
 
+            createdPost.user_id = Number(user.id)
+            createdPost.aktif = "aktif"
+
+            console.log(createdPost)
             const post = await prisma.jastiper_post.create({
-                data: _data
+                data : createdPost
             })
             return {
                 status: 200,
@@ -193,8 +197,6 @@ class PostService {
 
         }
     }
-
-
 }
 
 module.exports = PostService

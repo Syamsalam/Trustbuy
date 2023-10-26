@@ -17,7 +17,7 @@ const ImageBase64 = (image) => {
 }
 
 const searchUser =  async (username) => {
-    try{
+    try{    
         const data = await prisma.users.findUnique({
             where: {
                 username: username

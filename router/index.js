@@ -56,23 +56,37 @@ router.get('/user/history-user-detail', auth, HistoryController.HistoryUserDetai
 router.get('/user/get-post-aktif', auth, UserController.getPostByStatus)
 router.get('/user/detail-profile', auth, UserController.GetUserDetail)
 router.get('/user/get-post', auth, JastipController.getPost)
+router.post('/user/create-order',auth, OrderController.CreateOrder)
 
 //jastip
 router.post('/jastip/create-product', auth, ProducController.CreateProduct)
 .get('/jastip/product', auth, CommonController.GetProduct)
 .put('/jastip/update-product', auth, ProducController.UpdateProduct)
 .delete('/jastip/delete-product', auth, ProducController.DeleteProduct)
-.post('/jastip/create-order', auth, OrderController.CreateOrder)
+
+.post('/jastip/create-order-items', auth, OrderController.CreateOrderItems)
+.get('/jastip/order-items/:id',auth,OrderController.GetOrderItems)
+
 .put('/jastip/update-order', auth, OrderController.UpdateOrder)
-.delete('/jastip/delete-order', auth, OrderController.DeleteOrder)
+.delete('/jastip/delete-order/:id', auth, OrderController.DeleteOrder)
+
+.get('/jastip/all-orders', auth, OrderController.AllOrders)
+
 .get('/jastip/history-jastip', auth, HistoryController.HistoryJastip)
 .get('/jastip/history-jastip-detail', auth, HistoryController.HistoryJastipDetails)
-.get('/jastip/all-orders', auth, OrderController.AllOrders)
+
 .put('/jastip/set-status', auth, JastipController.IsOnline)
+
 .post('/jastip/create-post', auth, JastipController.createpost)
-.put('/jastip/update-post/:post_id', auth, JastipController.updatePost)
+.put('/jastip/update-post', auth, JastipController.updatePost)
+
 .get('/jastip/detail-profile', auth, JastipController.GetJastipDetails)
 .put('/jastip/update-user', auth, JastipController.UpdateJastip)
+
+.get('/jastip/order-titip',auth, OrderController.OrderByStatus)
+.put('/jastip/update-titip',auth,OrderController.UpdateOrderStatus)
+
+.get('/jastip/biaya-jastip/:id', auth, OrderController.GetBiayaJastip)
 
 
 

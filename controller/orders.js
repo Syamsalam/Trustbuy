@@ -1,6 +1,7 @@
 const { roleValidations } = require('../middleware/authValidation');
 const handleServerResponse = require('../middleware/generateRespon');
 const OrderService = require('../services/orders');
+const PaymentService = require('../services/payment');
 
 class OrderController {
     static AllOrders = roleValidations(1, async (req,res, next) => {
@@ -12,11 +13,21 @@ class OrderController {
         }
     })
 
-    
-    static CreateOrder = roleValidations(1, async (req,res,next) => {
+    static CreateOrder = roleValidations(2, async (req,res,next) => {
         try {
             const order = await OrderService.createOrder(req.body);
-            return handleServerResponse(req,order.status,order.message,order.data);
+            return handleServerResponse(res,order.status,order.message,order.data);
+        } catch (err) {
+            next(err)
+        }
+    })
+
+    
+    static CreateOrderItems = roleValidations(3, async (req,res,next) => {
+        try {
+            // console.log(req)
+            const order = await OrderService.createOrderItems(req.body);
+            return handleServerResponse(res,order.status,order.message,order.data);
         } catch (err) {
             next(err)
         }
@@ -24,16 +35,54 @@ class OrderController {
 
     static UpdateOrder = roleValidations(1, async (req,res,next) => {
         try {
-            const order = await OrderService.editOrder(req.user,req.body);
+            const order = await OrderService.editOrder(req.body);
             return handleServerResponse(res,order.status,order.message,order.data);
         } catch (err) {
             next(err)
         }
     })
 
-    static DeleteOrder = roleValidations(1,async (req,res,next) => {
+    static DeleteOrder = roleValidations(3,async (req,res,next) => {
         try {
-            const order = await OrderService.deleteOrder(req.user);
+            console.log(req.body)
+            const order = await OrderService.deleteOrder(req.params.id);
+            return handleServerResponse(res,order.status,order.message,order.data);
+        } catch (err) {
+            next(err)
+        }
+    })
+
+    static OrderByStatus = roleValidations(3,async (req, res, next) => {
+        try {
+            const order = await OrderService.getOrderByStatus(req.user);
+            return handleServerResponse(res,order.status,order.message,order.data);
+        } catch (err) {
+            next(err)
+        }
+    })
+
+    static UpdateOrderStatus = roleValidations(3, async (req,res,next) => {
+        try {
+            const order = await OrderService.updateOrderStatus(req.body);
+            return handleServerResponse(res,order.status,order.message,order.data);
+        } catch (err) {
+            next(err)
+        }
+    })
+
+    static GetOrderItems = roleValidations(3, async (req,res,next) => {
+        try {
+            const order = await OrderService.getOrderItems(req.params.id);
+            return handleServerResponse(res,order.status,order.message,order.data);
+        } catch (err) {
+            next(err)
+        }
+    })
+
+    //payment
+    static GetBiayaJastip = roleValidations(3, async (req,res,next) => {
+        try {
+            const order = await PaymentService.getBiayaJastip(req.params.id);
             return handleServerResponse(res,order.status,order.message,order.data);
         } catch (err) {
             next(err)

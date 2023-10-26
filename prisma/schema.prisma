@@ -14,35 +14,39 @@ model category {
 }
 
 model order_items {
-  id         Int       @id @default(autoincrement())
-  order_id   Int?
-  product_id Int?
-  quantity   Int?
-  subtotal   Decimal?  @db.Decimal(10, 2)
-  orders     orders?   @relation(fields: [order_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "order_items_ibfk_1")
-  products   products? @relation(fields: [product_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "order_items_ibfk_2")
+  id           Int      @id @default(autoincrement())
+  order_id     Int?
+  product_name String?  @db.VarChar(255)
+  quantity     Int?
+  subtotal     Decimal? @db.Decimal(10, 2)
+  orders       orders?  @relation(fields: [order_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "order_items_ibfk_1")
 
   @@index([order_id], map: "order_id")
-  @@index([product_id], map: "product_id")
 }
 
 model orders {
-  id                Int              @id @default(autoincrement())
-  user_id           Int?
-  order_date        DateTime?        @db.Date
-  status_id         Int?
-  shipping_address  String?          @db.Text
-  payment_method_id Int?
-  history           history[]
-  order_items       order_items[]
-  users             users?           @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "orders_ibfk_1")
-  payment_methods   payment_methods? @relation(fields: [payment_method_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "orders_ibfk_2")
-  status            status?          @relation(fields: [status_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "orders_ibfk_3")
-  payment           payment[]
+  id                            Int              @id @default(autoincrement())
+  jastip_id                     Int?
+  user_id                       Int?
+  post_id                       Int?
+  order_date                    DateTime?        @db.Date
+  status_id                     Int?
+  shipping_address              String?          @db.Text
+  payment_method_id             Int?
+  history                       history[]
+  order_items                   order_items[]
+  users                         users?           @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "orders_ibfk_1")
+  payment_methods               payment_methods? @relation(fields: [payment_method_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "orders_ibfk_2")
+  status                        status?          @relation(fields: [status_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "orders_ibfk_3")
+  users_orders_jastip_idTousers users?           @relation("orders_jastip_idTousers", fields: [jastip_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "orders_ibfk_4")
+  jastiper_post                 jastiper_post?   @relation(fields: [post_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "orders_ibfk_5")
+  payment                       payment[]
 
   @@index([payment_method_id], map: "payment_method_id")
   @@index([user_id], map: "user_id")
   @@index([status_id], map: "status_id")
+  @@index([jastip_id], map: "jastip_id")
+  @@index([post_id], map: "post_id")
 }
 
 model payment {
@@ -67,14 +71,12 @@ model payment_methods {
 }
 
 model products {
-  id           Int           @id @default(autoincrement())
-  product_name String        @db.VarChar(100)
-  description  String?       @db.Text
-  price        Decimal       @db.Decimal(10, 2)
+  id           Int       @id @default(autoincrement())
+  product_name String    @db.VarChar(100)
+  price        Decimal   @db.Decimal(10, 2)
   stock        Int?
   category_id  Int?
-  order_items  order_items[]
-  category     category?     @relation(fields: [category_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "products_ibfk_1")
+  category     category? @relation(fields: [category_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "products_ibfk_1")
 
   @@index([category_id], map: "category_id")
 }
@@ -107,11 +109,14 @@ model users {
   email                            String          @db.VarChar(100)
   role_id                          Int
   user_details_id                  Int             @unique
+  chatt_chatt_sender_idTousers     chatt[]         @relation("chatt_sender_idTousers")
+  chatt_chatt_receiver_idTousers   chatt[]         @relation("chatt_receiver_idTousers")
   history                          history[]
   history_history_id_jastipTousers history[]       @relation("history_id_jastipTousers")
   image                            image?
   jastiper_post                    jastiper_post[]
   orders                           orders[]
+  orders_orders_jastip_idTousers   orders[]        @relation("orders_jastip_idTousers")
   role                             role            @relation(fields: [role_id], references: [id], onUpdate: Restrict, map: "users_ibfk_1")
   user_details                     user_details    @relation(fields: [user_details_id], references: [id], onUpdate: Restrict, map: "users_ibfk_2")
 
@@ -146,6 +151,7 @@ model jastiper_post {
   waktu_akhir DateTime?            @db.Time(0)
   aktif       jastiper_post_aktif?
   users       users?               @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "jastiper_post_ibfk_1")
+  orders      orders[]
 
   @@index([user_id], map: "user_id")
 }
@@ -161,6 +167,19 @@ model image {
 model jenis_image {
   id          Int     @id
   jenis_image String? @db.VarChar(255)
+}
+
+model chatt {
+  id                             Int      @id @default(autoincrement())
+  isi_pesan                      String   @db.Text
+  sender_id                      Int
+  receiver_id                    Int
+  created_at                     DateTime @db.Date @default(now())
+  sender   users    @relation("chatt_sender_idTousers", fields: [sender_id], references: [id], onDelete: Cascade, map: "chatt_ibfk_1")
+  receiver users    @relation("chatt_receiver_idTousers", fields: [receiver_id], references: [id], onDelete: Cascade, map: "chatt_ibfk_2")
+
+  @@index([receiver_id], map: "receiver_id")
+  @@index([sender_id], map: "sender_id")
 }
 
 enum jastiper_post_aktif {

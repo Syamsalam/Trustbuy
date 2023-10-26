@@ -4,10 +4,10 @@ const server = express();
 const apiRouter = require('./router');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const passport = require('passport')
-const { PrismaClient } = require('@prisma/client')
+const passport = require('passport');
+const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const { applyPassportStrategy } = require('./auth/passport-jwt')
+const { applyPassportStrategy } = require('./auth/passport-jwt');
 
 server.use(bodyParser.json());
 server.use(express.urlencoded({
@@ -18,7 +18,7 @@ server.use(cors({
     origin : "*"
 }));
 
-applyPassportStrategy(passport)
+applyPassportStrategy(passport);
 server.use(passport.initialize());
 
 (async () => {
@@ -29,7 +29,7 @@ server.use(passport.initialize());
             server.use('/api', apiRouter);
             server.get('/', (req, res) => {
                 return res.status(200).send({
-                    message: "backend trustBuy by Syamsul Alam Coy"
+                    message: "backend trustBuy by Syamsul Alam"
                 })
             })
             server.listen(port, () => {

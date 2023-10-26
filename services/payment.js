@@ -58,6 +58,31 @@ class PaymentService {
         }
     }
 
+    static async getBiayaJastip(order_id) {
+        try {
+            const payment = await prisma.payment.findFirst({
+                where: {
+                    order_id: Number(order_id)
+                },
+                select: {
+                    total_pembayaran: true
+                }
+            })
+
+            return {
+                status: 200,
+                message: "Berhasil mendapat data payment",
+                data: payment
+            }
+        } catch (err) {
+            return {
+                status: 500,
+                message: "Gagal mendapat data payment",
+                data: err.message
+            }
+        }
+    }
+
 }
 
 module.exports = PaymentService;

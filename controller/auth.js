@@ -11,6 +11,7 @@ const {
 const {
     config
 } = require('../auth/passport-jwt')
+
 class AuthController {
 
     static async register(req, res) {

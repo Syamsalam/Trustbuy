@@ -14,44 +14,52 @@ model category {
 }
 
 model order_items {
-  id         Int       @id @default(autoincrement())
-  order_id   Int?
-  product_id Int?
-  quantity   Int?
-  subtotal   Decimal?  @db.Decimal(10, 2)
-  orders     orders?   @relation(fields: [order_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "order_items_ibfk_1")
-  products   products? @relation(fields: [product_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "order_items_ibfk_2")
+  id           Int      @id @default(autoincrement())
+  order_id     Int?
+  product_name String?  @db.VarChar(255)
+  quantity     Int?
+  subtotal     Decimal? @db.Decimal(10, 2)
+  orders       orders?  @relation(fields: [order_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "order_items_ibfk_1")
 
   @@index([order_id], map: "order_id")
-  @@index([product_id], map: "product_id")
 }
 
 model orders {
-  id                Int              @id @default(autoincrement())
-  user_id           Int?
-  order_date        DateTime?        @db.Date
-  status_id         Int?
-  shipping_address  String?          @db.Text
-  payment_method_id Int?
-  history           history[]
-  order_items       order_items[]
-  users             users?           @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "orders_ibfk_1")
-  payment_methods   payment_methods? @relation(fields: [payment_method_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "orders_ibfk_2")
-  status            status?          @relation(fields: [status_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "orders_ibfk_3")
-  payment           payment[]
+  id                            Int              @id @default(autoincrement())
+  jastip_id                     Int?
+  user_id                       Int?
+  post_id                       Int?
+  order_date                    DateTime?        @db.Date
+  status_id                     Int?
+  shipping_address              String?          @db.Text
+  payment_method_id             Int?
+  history                       history[]
+  order_items                   order_items[]
+  users                         users?           @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "orders_ibfk_1")
+  payment_methods               payment_methods? @relation(fields: [payment_method_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "orders_ibfk_2")
+  status                        status?          @relation(fields: [status_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "orders_ibfk_3")
+  users_orders_jastip_idTousers users?           @relation("orders_jastip_idTousers", fields: [jastip_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "orders_ibfk_4")
+  jastiper_post                 jastiper_post?   @relation(fields: [post_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "orders_ibfk_5")
+  payment                       payment[]
 
   @@index([payment_method_id], map: "payment_method_id")
   @@index([user_id], map: "user_id")
   @@index([status_id], map: "status_id")
+  @@index([jastip_id], map: "jastip_id")
+  @@index([post_id], map: "post_id")
 }
 
 model payment {
-  id           Int       @id @default(autoincrement())
-  order_id     Int?
-  payment_date DateTime? @db.Date
-  amount       Decimal?  @db.Decimal(10, 2)
-  history      history[]
-  orders       orders?   @relation(fields: [order_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "payment_ibfk_1")
+  id               Int       @id @default(autoincrement())
+  order_id         Int?
+  payment_date     DateTime? @db.Date
+  amount           Decimal?  @db.Decimal(10, 2)
+  biaya_ongkir     Decimal?  @db.Decimal(10, 2)
+  biaya_app        Decimal?  @db.Decimal(10, 2)
+  biaya_jastip     Decimal?  @db.Decimal(10, 2)
+  total_pembayaran Decimal?  @db.Decimal(10, 2)
+  history          history[]
+  orders           orders?   @relation(fields: [order_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "payment_ibfk_1")
 
   @@index([order_id], map: "order_id")
 }
@@ -63,14 +71,12 @@ model payment_methods {
 }
 
 model products {
-  id           Int           @id @default(autoincrement())
-  product_name String        @db.VarChar(100)
-  description  String?       @db.Text
-  price        Decimal       @db.Decimal(10, 2)
+  id           Int       @id @default(autoincrement())
+  product_name String    @db.VarChar(100)
+  price        Decimal   @db.Decimal(10, 2)
   stock        Int?
   category_id  Int?
-  order_items  order_items[]
-  category     category?     @relation(fields: [category_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "products_ibfk_1")
+  category     category? @relation(fields: [category_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "products_ibfk_1")
 
   @@index([category_id], map: "category_id")
 }
@@ -88,30 +94,29 @@ model status {
 }
 
 model user_details {
-  id                Int    @id @default(autoincrement())
-  nama              String? @db.VarChar(255)
-  alamat            String @db.VarChar(255)
-  nomor_telepon     String @db.VarChar(20)
+  id                Int     @id @default(autoincrement())
+  nama              String  @db.VarChar(255)
+  alamat            String  @db.VarChar(255)
+  nomor_telepon     String  @db.VarChar(20)
   data_identifikasi String? @db.VarChar(255)
   users             users?
 }
 
 model users {
   id                               Int             @id @default(autoincrement())
-  username                         String          @db.VarChar(50)  @unique
+  username                         String          @unique @db.VarChar(50)
   password                         String          @db.VarChar(255)
   email                            String          @db.VarChar(100)
   role_id                          Int
   user_details_id                  Int             @unique
   history                          history[]
   history_history_id_jastipTousers history[]       @relation("history_id_jastipTousers")
+  image                            image?
   jastiper_post                    jastiper_post[]
   orders                           orders[]
-  image                            image[]
+  orders_orders_jastip_idTousers   orders[]        @relation("orders_jastip_idTousers")
   role                             role            @relation(fields: [role_id], references: [id], onUpdate: Restrict, map: "users_ibfk_1")
-  user_details                     user_details?    @relation(fields: [user_details_id], references: [id], onUpdate: Restrict, map: "users_ibfk_2")
-
-  @@unique([id , role_id])
+  user_details                     user_details    @relation(fields: [user_details_id], references: [id], onUpdate: Restrict, map: "users_ibfk_2")
 
   @@index([role_id], map: "users_ibfk_1")
 }
@@ -136,14 +141,15 @@ model history {
 
 model jastiper_post {
   id          Int                  @id @default(autoincrement())
-  user_id     Int                  
-  judul       String               @db.VarChar(255)
+  user_id     Int?
+  judul       String               @unique(map: "judul") @db.VarChar(255)
   deskripsi   String?              @db.Text
   lokasi      String?              @db.Text
   waktu_mulai DateTime?            @db.Time(0)
   waktu_akhir DateTime?            @db.Time(0)
   aktif       jastiper_post_aktif?
   users       users?               @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "jastiper_post_ibfk_1")
+  orders      orders[]
 
   @@index([user_id], map: "user_id")
 }
@@ -151,11 +157,9 @@ model jastiper_post {
 model image {
   id             Int     @id @default(autoincrement())
   jenis_image_id Int
-  users_id       Int?
+  users_id       Int?    @unique(map: "users_id")
   image          String? @db.LongText
-  users          users?   @relation(fields: [users_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "image_ibfk_1")
-  
-  @@unique([users_id], map: "users_id")
+  users          users?  @relation(fields: [users_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "image_ibfk_1")
 }
 
 model jenis_image {
