@@ -99,6 +99,28 @@ class PostService {
         }
     }
 
+    static async getPostId(id) {
+        try {
+            const post = await prisma.jastiper_post.findUnique({
+                where: {
+                    id: Number(id)
+                }
+            })
+
+            return {
+                status: 200,
+                message: "Berhasil Mengambil Post",
+                data: post
+            }
+        } catch (err) {
+            return {
+                status : 500,
+                message : "Gagal Mengambil Post",
+                data: null
+            }
+        }
+    }
+
     static async getAllPost() {
         try {
             const post = await prisma.jastiper_post.findMany()

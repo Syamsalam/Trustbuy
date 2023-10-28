@@ -105,7 +105,8 @@ class UserService {
                                         select: {
                                             image: true
                                         }
-                                    }
+                                    },
+                                    username: true
                                 }
                             }
                         }

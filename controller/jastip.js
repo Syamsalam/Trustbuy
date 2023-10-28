@@ -35,7 +35,17 @@ class JastipController {
 
     static getPost = roleValidations(3,async (req,res,next) => {
         try{
+            // console.log(req.user)
             const jastip = await PostService.getPost(req.user);
+            return handleServerResponse(res,jastip.status,jastip.message,jastip.data);
+        } catch (err) {
+            next(err);
+        }
+    })
+
+    static getPostId = roleValidations(3,async (req,res,next) => {
+        try {
+            const jastip = await PostService.getPostId(req.params.id);
             return handleServerResponse(res,jastip.status,jastip.message,jastip.data);
         } catch (err) {
             next(err);

@@ -55,7 +55,6 @@ router.get('/user/history-user', auth, HistoryController.HistoryUser)
 router.get('/user/history-user-detail', auth, HistoryController.HistoryUserDetails)
 router.get('/user/get-post-aktif', auth, UserController.getPostByStatus)
 router.get('/user/detail-profile', auth, UserController.GetUserDetail)
-router.get('/user/get-post', auth, JastipController.getPost)
 router.post('/user/create-order',auth, OrderController.CreateOrder)
 
 //jastip
@@ -79,6 +78,8 @@ router.post('/jastip/create-product', auth, ProducController.CreateProduct)
 
 .post('/jastip/create-post', auth, JastipController.createpost)
 .put('/jastip/update-post', auth, JastipController.updatePost)
+.get('/jastip/get-post', auth, JastipController.getPost)
+.get('/jastip/get-post/:id',auth,JastipController.getPostId)
 
 .get('/jastip/detail-profile', auth, JastipController.GetJastipDetails)
 .put('/jastip/update-user', auth, JastipController.UpdateJastip)
