@@ -79,6 +79,24 @@ class JastipController {
         }
     })
 
+    static UpdateStatus = roleValidations(3, async (req, res, next) => {
+        try {
+            const data = await PostService.toggleAktifJastip(req.user);
+            return handleServerResponse(res,data.status, data.message, data.data);
+        } catch (err) {
+            next(err)
+        }
+    })
+
+    static CheckStatus = roleValidations(3, async (req,res,next) => {
+        try {
+            const status = await PostService.checkStatusPost(req.user);
+            return handleServerResponse(res,status.status, status.message, status.data);
+        } catch (err) {
+            next(err)
+        }
+    })
+
     
 
 }

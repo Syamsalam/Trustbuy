@@ -390,6 +390,55 @@ class OrderService {
             }
         }
     }
+
+
+    //for user
+    static async getOrderUser(user) {
+        try {
+            const order = await prisma.orders.findMany({
+                where: {
+                    user_id: Number(user.id),
+                    OR: [{
+                        status_id: Number(3)
+                    }, 
+                    {
+                        status_id: Number(5)
+                    }]
+                },
+                include: {
+                    jastiper_post: true,
+                    users_orders_jastip_idTousers: {
+                        select: {
+                            user_details: {
+                                select: {
+                                    nama: true,
+                                    nomor_telepon: true
+                                }
+                            },
+                            image: {
+                                select: {
+                                    image: true
+                                }
+                            }
+                        }
+                    },
+                    order_items: true,
+                }
+            })
+
+            return {
+                status: 200,
+                message: 'Berhasil Mendapat Data Order',
+                data: order
+            }
+        } catch (err) {
+            return {
+                status: 500,
+                message: "Gagal mendapatkan order user",
+                data: err.message
+            }
+        }
+    }
 }
 
 module.exports = OrderService;

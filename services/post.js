@@ -187,36 +187,74 @@ class PostService {
         }
     }
 
-    static async toggleAktifJastip(user) {
+    static async checkStatusPost(user) {
         try {
-
-            const prev = await prisma.jastiper_post.findMany({
+            const post = await prisma.jastiper_post.findMany({
                 where: {
-                    users: Number(user.id)
+                    user_id: Number(user.id)
                 },
-                select : {
-                    aktif : true
+                select: {
+                    aktif: true
                 }
             })
 
-            if(prev.length == null) return {
+            return {
+                status: 200,
+                message: "Berhasil Mengambil Post",
+                data: post
+            }
+        } catch (err) {
+            return {
+                status: 500,
+                message: "Gagal Mengambil Status",
+                data: null
+            }
+        }
+    }
+
+    static async toggleAktifJastip(user) {
+        try {
+            
+            const prev = await prisma.jastiper_post.findMany({
+                where: {
+                    users : {
+                        id: Number(user.id)
+                    }
+                },
+                select : {
+                    aktif : true 
+                }
+            })
+
+            if(prev.length === 0) return {
                 status : 404,
                 message : "",
                 data : null
             }
 
-            await prisma.jastiper_post.update({
+            await prisma.jastiper_post.updateMany({
                 where : {
-                    user : Number(user.id)
+                    users : {
+                        id: Number(user.id)
+                    }
                 },
                 data : {
                     aktif : prev[0].aktif == "aktif" ? "non_aktif" : "aktif"
                 }
             })
-            
 
+            return {
+                status : 200,
+                message : "Berhasil Mengubah Status",
+                data : null
+            }
+        
         } catch (err) {
-
+            return {
+                status : 500,
+                message : "Gagal Mengubah Status",
+                data : err.message
+            }
         }
     }
 }

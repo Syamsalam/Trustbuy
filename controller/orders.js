@@ -79,6 +79,17 @@ class OrderController {
         }
     })
 
+    //untuk user melihat postingan yang diterima oleh jastiper
+    static GetOrderForUser = roleValidations(2,async (req,res,next) => {
+        try {
+            const order = await OrderService.getOrderUser(req.user);
+            return handleServerResponse(res,order.status,order.message,order.data);
+        } catch (err) {
+            next(err)
+        }
+    
+    })
+
     //payment
     static GetBiayaJastip = roleValidations(3, async (req,res,next) => {
         try {
