@@ -78,7 +78,11 @@ class OrderService {
 
                 if (data?.payment != null) {
 
-                    const order_items = await prisma.order_items.findMany()
+                    const order_items = await prisma.order_items.findMany({
+                        where: {
+                            order_id: order.id
+                        }
+                    })
 
                     const totalSubtotal = order_items.reduce((total, item) => {
                         return total + (Number(item.subtotal) || 0);
@@ -313,7 +317,8 @@ class OrderService {
                                 }
                             }
                         }
-                    }
+                    },
+                    order_items:true,
                 }
             })
 
@@ -337,8 +342,10 @@ class OrderService {
                                     image: true
                                 }
                             }
+
                         }
-                    }
+                    },
+                    order_items: true
                 }
             })
 

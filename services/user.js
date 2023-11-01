@@ -114,11 +114,6 @@ class UserService {
                 }
             })
 
-            
-
-            
-            
-
             return {
                 status: 200,
                 message: "Data Profil user berhasil didapat",

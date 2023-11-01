@@ -34,14 +34,14 @@ class PostService {
         }
     }
 
-    static async updatePost(_data, post_id) {
+    static async updatePost(data) {
         try {
 
             const post = await prisma.jastiper_post.update({
                 where: {
-                    id: Number(post_id)
+                    id: Number(data.id)
                 },
-                data: _data
+                data: data
             })
             return {
                 status: 200,

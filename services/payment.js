@@ -65,7 +65,9 @@ class PaymentService {
                     order_id: Number(order_id)
                 },
                 select: {
-                    total_pembayaran: true
+                    total_pembayaran: true,
+                    biaya_jastip: true,
+                    biaya_ongkir: true
                 }
             })
 

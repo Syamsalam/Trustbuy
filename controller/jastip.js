@@ -26,7 +26,7 @@ class JastipController {
 
     static updatePost = roleValidations(3, async (req,res,next) => {
         try {
-            const jastip = await PostService.updatePost(req.body,req.params.post_id);
+            const jastip = await PostService.updatePost(req.body);
             return handleServerResponse(res,jastip.status,jastip.message,jastip.data);
         } catch (err) {
             next(err);
