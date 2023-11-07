@@ -57,6 +57,7 @@ router.get('/user/get-post-aktif', auth, UserController.getPostByStatus)
 router.get('/user/detail-profile', auth, UserController.GetUserDetail)
 router.post('/user/create-order',auth, OrderController.CreateOrder)
 router.get('/user/get-confirm-order',auth,OrderController.GetOrderForUser)
+router.get('/user/get-detail-order/:id',auth,OrderController.GetOrderItemsUser)
 
 //jastip
 router.post('/jastip/create-product', auth, ProducController.CreateProduct)
@@ -101,6 +102,7 @@ router.get('/common/photo-profile', auth, UserController.GetProfile)
 router.get('/common/profile', auth, CommonController.GetProfile);
 router.post('/common/upload-profile', auth,CommonController.UploadProfile);
 router.put('/common/edit-profile', auth, CommonController.UpdateProfile);
+router.put('/common/update-status', auth, OrderController.UpdateOrderVerify);
 
 
 //Admin

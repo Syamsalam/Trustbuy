@@ -2,6 +2,11 @@ const {PrismaClient} = require('@prisma/client');
 const prisma = new PrismaClient();
 class HistoryService {
 
+    //create history
+    static async createHistory(data) {
+        
+    }    
+
     //ini ke jastip
     static async historyJastip(user) {
         try{
@@ -13,18 +18,8 @@ class HistoryService {
                    payment:{
                      select:{
                         amount: true,
+                        payment_date: true
                      }
-                   },
-                   users :{
-                    select :{
-                        id: true,
-                        username: true,
-                        user_details:{
-                            select:{
-                                nama : true,
-                            }
-                        }
-                    }
                    },
                    users_history_id_jastipTousers: {
                     select:{
@@ -34,7 +29,17 @@ class HistoryService {
                             }
                         }
                     }
-                   }
+                   },
+                   orders: {
+                    select: {
+                        jastiper_post: {
+                            select: {
+                                judul: true
+                            }
+                        }
+                    }
+                   },
+                   
                 }
             })
 

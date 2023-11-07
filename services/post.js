@@ -20,6 +20,8 @@ class PostService {
             const post = await prisma.jastiper_post.create({
                 data : createdPost
             })
+
+            
             return {
                 status: 200,
                 message: "Berhasil Menambah Post",
@@ -85,16 +87,24 @@ class PostService {
                     user_id: Number(user.id)
                 }
             })
+            
+            if(post.length === 0) return {
+                status: 204,
+                message: "Post 0",
+                data: null
+            }
+
             return {
                 status: 200,
                 message: "Berhasil Mengambil Post",
                 data: post
             }
         } catch (err) {
+            console.log(err)
             return {
                 status: 500,
                 message: "Gagal Mengambil Post",
-                data: null
+                data: err.message
             }
         }
     }
@@ -172,6 +182,12 @@ class PostService {
             //     }
             // })
 
+            if(user.length === 0) return {
+                status: 200,
+                message: "Tidak ada Postingan",
+                data: null
+            }
+
             return {
                 status: 200,
                 message: "Berhasil Mendapat seluruh post aktif",
@@ -189,14 +205,23 @@ class PostService {
 
     static async checkStatusPost(user) {
         try {
-            const post = await prisma.jastiper_post.findMany({
-                where: {
-                    user_id: Number(user.id)
-                },
-                select: {
-                    aktif: true
+
+                const post = await prisma.jastiper_post.findMany({
+                    where: {
+                        user_id: Number(user.id)
+                    },
+                    select: {
+                        aktif: true
+                    }
+                })
+    
+                if(post.length == 0) return {
+                    status: 404,
+                    message: "belum ada post",
+                    data: null
                 }
-            })
+            
+
 
             return {
                 status: 200,
@@ -215,22 +240,18 @@ class PostService {
     static async toggleAktifJastip(user) {
         try {
             
-            const prev = await prisma.jastiper_post.findMany({
+            const prev = await prisma.users.findFirst({
                 where: {
-                    users : {
-                        id: Number(user.id)
-                    }
+                    id: Number(user.id)   
                 },
                 select : {
-                    aktif : true 
+                    jastiper_post: {
+                        select: {
+                            aktif: true
+                        }
+                    } 
                 }
             })
-
-            if(prev.length === 0) return {
-                status : 404,
-                message : "",
-                data : null
-            }
 
             await prisma.jastiper_post.updateMany({
                 where : {
@@ -239,7 +260,7 @@ class PostService {
                     }
                 },
                 data : {
-                    aktif : prev[0].aktif == "aktif" ? "non_aktif" : "aktif"
+                    aktif : prev.jastiper_post[0].aktif == "aktif" ? "non_aktif" : "aktif"
                 }
             })
 

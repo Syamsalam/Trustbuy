@@ -67,9 +67,21 @@ class PaymentService {
                 select: {
                     total_pembayaran: true,
                     biaya_jastip: true,
-                    biaya_ongkir: true
+                    biaya_ongkir: true,
+                    orders: {
+                        select: {
+                            jastiper_post: {
+                                select: {
+                                    judul: true
+                                }
+                            }
+                        }
+                    }
                 }
             })
+
+            
+            
 
             return {
                 status: 200,

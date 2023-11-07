@@ -33,10 +33,15 @@ class OrderService {
     static async createOrder(data) {
         try {
             const datas = data.order
-            console.log(datas)
+            // console.log(datas)
             const order = await prisma.orders.create({
-                data: datas
+                data: {
+                    ...datas,
+                    verification: 'confirm'
+                }
             })
+
+            // console.log(order)
             return {
                 status: 200,
                 message: "Berhasil Membuat Order",
@@ -54,7 +59,16 @@ class OrderService {
     //ini ke jastip
     static async createOrderItems(data) {
         try {
-            console.log(data)
+            // console.log(data)
+
+            await prisma.orders.update({
+                where: {
+                    id: Number(data.id)
+                },
+                data: {
+                    status_id: 4
+                }
+            })
 
             const order = await prisma.orders.findFirst({
                 where: {
@@ -71,7 +85,7 @@ class OrderService {
             if (order != null) {
 
                 if (data?.order_items != null) {
-                    const order_items = await prisma.order_items.createMany({
+                    const create_order_items = await prisma.order_items.createMany({
                         data: data.order_items
                     })
                 }
@@ -142,9 +156,49 @@ class OrderService {
                             id: Number(data.id)
                         },
 
-                    }
+                    },
+                    payment: true,
                 }
             })
+
+            const order_items = await prisma.order_items.findMany({
+                where: {
+                    order_id: Number(order.id)
+                }
+            })
+
+            const totalSubtotal = order_items.reduce((total, item) => {
+                return total + (Number(item.subtotal) || 0);
+            }, 0);
+            let createdPayment = {
+                order_id: 0,
+                // payment_date: "", //belum ada
+                amount: 0,
+                biaya_ongkir: 0,
+                biaya_app: 0,
+                biaya_jastip: 0,
+                total_pembayaran: 0,
+            }
+
+            createdPayment.order_id = Number(data.id)
+            
+            createdPayment.amount = Number(totalSubtotal)
+
+            const keuntungan = (Number(totalSubtotal) * 0.04)/2;
+
+            createdPayment.biaya_ongkir = Number(data.payment.biaya_ongkir)
+            createdPayment.biaya_jastip = Number(keuntungan)
+            createdPayment.biaya_app = Number(keuntungan)
+
+            createdPayment.total_pembayaran = Number(totalSubtotal) + Number(createdPayment.biaya_app) + Number(createdPayment.biaya_jastip) + Number(createdPayment.biaya_ongkir)
+
+                await prisma.payment.update({
+                    where: {
+                        id: Number(order?.payment?.id)
+                    },
+                    data: createdPayment
+                })
+
             return {
                 status: 200,
                 message: "Berhasil Mengubah Status Order",
@@ -182,18 +236,29 @@ class OrderService {
 
     static async getOrderItems(data) {
         try {
-            console.log(data)
+            // console.log(data)
             const order = await prisma.orders.findUnique({
                 where: {
                     id: Number(data)
                 },
                 include: {
                     order_items: true,
+                    jastiper_post: {
+                        select: {
+                            judul: true
+                        }
+                    },
+                    payment: {
+                        where: {
+                            order_id: Number(data)
+                        }
+                    }
                 }
             })
 
+            // console.log(order)
+
             delete order.order_date
-            delete order.post_id
             delete order.shipping_address
             delete order.user_id
             delete order.jastip_id
@@ -238,7 +303,7 @@ class OrderService {
     //ini ke jastip
     static async editOrder(data) {
         try {
-            console.log(data)
+            // console.log(data)
             const order = await prisma.orders.update({
                 where: {
                     id: Number(data.id)
@@ -272,7 +337,7 @@ class OrderService {
             //     }
             // })
 
-            console.log(id)
+            // console.log(id)
             const order = await prisma.orders.delete({
                 where: {
                     id: Number(id)
@@ -298,39 +363,17 @@ class OrderService {
             // console.log(user)
             const orderliat = await prisma.orders.findMany({
                 where: {
-                    status_id: Number(2),
+                    NOT: {
+                        status_id: Number(9)
+                    },
                     jastip_id: Number(user.id)
                 },
                 include: {
                     jastiper_post: true,
-                    users: {
-                        include: {
-                            user_details: {
-                                select: {
-                                    nama: true,
-                                    nomor_telepon: true
-                                }
-                            },
-                            image: {
-                                select: {
-                                    image: true
-                                }
-                            }
-                        }
-                    },
                     order_items:true,
-                }
-            })
-
-            const orderterima = await prisma.orders.findMany({
-                where: {
-                    status_id: Number(3),
-                    jastip_id: Number(user.id)
-                },
-                include: {
-                    jastiper_post: true,
+                    status:true,
                     users: {
-                        include: {
+                        select: {
                             user_details: {
                                 select: {
                                     nama: true,
@@ -342,20 +385,45 @@ class OrderService {
                                     image: true
                                 }
                             }
-
                         }
                     },
-                    order_items: true
                 }
             })
 
-            const allOrder = orderliat.concat(orderterima);
+            // const orderterima = await prisma.orders.findMany({
+            //     where: {
+            //         status_id: Number(3),
+            //         jastip_id: Number(user.id)
+            //     },
+            //     include: {
+            //         jastiper_post: true,
+            //         users: {
+            //             include: {
+            //                 user_details: {
+            //                     select: {
+            //                         nama: true,
+            //                         nomor_telepon: true
+            //                     }
+            //                 },
+            //                 image: {
+            //                     select: {
+            //                         image: true
+            //                     }
+            //                 }
+
+            //             }
+            //         },
+            //         order_items: true
+            //     }
+            // })
+
+            // const allOrder = orderliat.concat(orderterima);
 
             // console.info(allOrder)
             return {
                 status: 200,
                 message: "Berhasil Mendapat seluruh post titip",
-                data: allOrder
+                data: orderliat
             }
         } catch (err) {
             return {
@@ -374,7 +442,7 @@ class OrderService {
                     id: Number(data.id)
                 },
                 data: {
-                    status_id: Number(data.status_id)
+                    status_id: Number(data?.status_id),
                 }
             })
             return {
@@ -386,10 +454,37 @@ class OrderService {
             return {
                 status: 500,
                 message: "Gagal Mengubah Status Order",
-                data: null
+                data: err.message
             }
         }
     }
+
+    static async updateOrderVerify(data) {
+        try {
+            // console.log(data)
+            const order = await prisma.orders.update({
+                where: {
+                    id: Number(data.id)
+                },
+                data: {
+                    status_id: Number(data.status_id),
+                }
+            })
+            return {
+                status: 200,
+                message: "Berhasil Mengubah Status Order",
+                data: order
+            }
+        } catch (err) {
+            return {
+                status: 500,
+                message: "Gagal Mengubah Status Order",
+                data: err.message
+            }
+        }
+    }
+
+    // static async getOrderVerify(data)
 
 
     //for user
@@ -403,7 +498,23 @@ class OrderService {
                     }, 
                     {
                         status_id: Number(5)
-                    }]
+                    },
+                    {
+                        status_id: Number(4)
+                    },
+                    {
+                        status_id: Number(2)
+                    },
+                    {
+                        status_id: Number(6)
+                    },
+                    {
+                        status_id: Number(7)
+                    },
+                    {
+                        status_id: Number(8)
+                    }
+                ]
                 },
                 include: {
                     jastiper_post: true,
@@ -426,6 +537,7 @@ class OrderService {
                 }
             })
 
+            // console.log(order)
             return {
                 status: 200,
                 message: 'Berhasil Mendapat Data Order',

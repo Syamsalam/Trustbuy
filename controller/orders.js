@@ -70,6 +70,15 @@ class OrderController {
         }
     })
 
+    static async UpdateOrderVerify(req,res) {
+        try {
+            const order = await OrderService.updateOrderVerify(req.body);
+            return handleServerResponse(res,order.status,order.message,order.data);
+        } catch (err) {
+            next(err)
+        }
+    }
+
     static GetOrderItems = roleValidations(3, async (req,res,next) => {
         try {
             const order = await OrderService.getOrderItems(req.params.id);
@@ -88,6 +97,15 @@ class OrderController {
             next(err)
         }
     
+    })
+
+    static GetOrderItemsUser = roleValidations(2, async (req,res,next) => {
+        try {
+            const order = await OrderService.getOrderItems(req.params.id);
+            return handleServerResponse(res,order.status,order.message,order.data);
+        } catch (err) {
+            next(err)
+        }
     })
 
     //payment

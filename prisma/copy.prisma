@@ -109,6 +109,8 @@ model users {
   email                            String          @db.VarChar(100)
   role_id                          Int
   user_details_id                  Int             @unique
+  chatt_chatt_sender_idTousers     chatt[]         @relation("chatt_sender_idTousers")
+  chatt_chatt_receiver_idTousers   chatt[]         @relation("chatt_receiver_idTousers")
   history                          history[]
   history_history_id_jastipTousers history[]       @relation("history_id_jastipTousers")
   image                            image?
@@ -165,6 +167,19 @@ model image {
 model jenis_image {
   id          Int     @id
   jenis_image String? @db.VarChar(255)
+}
+
+model chatt {
+  id                             Int      @id @default(autoincrement())
+  isi_pesan                      String   @db.Text
+  sender_id                      Int
+  receiver_id                    Int
+  created_at                     DateTime @db.Date @default(now())
+  sender   users    @relation("chatt_sender_idTousers", fields: [sender_id], references: [id], onDelete: Cascade, map: "chatt_ibfk_1")
+  receiver users    @relation("chatt_receiver_idTousers", fields: [receiver_id], references: [id], onDelete: Cascade, map: "chatt_ibfk_2")
+
+  @@index([receiver_id], map: "receiver_id")
+  @@index([sender_id], map: "sender_id")
 }
 
 enum jastiper_post_aktif {
