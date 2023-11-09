@@ -3,8 +3,57 @@ const prisma = new PrismaClient();
 class HistoryService {
 
     //create history
-    static async createHistory(data) {
-        
+    static async createHistory(id,users) {
+        try{
+
+            const user = await prisma.users.findUnique({
+                where: {
+                    id: Number(users.id)
+                },
+                include: {
+                    orders: {
+                        where: {
+                            id: Number(id)
+                        },
+                        select: {
+                            id:true,
+                            payment: {
+                                select: {
+                                    id: true
+                                }
+                            },
+                            user_id: true,
+                            jastip_id: true
+                        }
+
+                    },
+
+                }
+            })
+
+            const data = user.orders[0];
+
+            const history = await prisma.history.create({
+                data: {
+                    id_user: Number(data.user_id),
+                    id_jastip: Number(data.jastip_id),
+                    id_payment: Number(data.payment.id),
+                    id_order: Number(data.id),
+                    history_time: new Date()
+                }
+            })
+            return {
+                status: 200,
+                message: "Berhasil Membuat History",
+                data: history,
+            }
+        } catch(err) {
+            return {
+                status: 500,
+                message: "Gagal Membuat History",
+                data: err.message,
+            }
+        }
     }    
 
     //ini ke jastip

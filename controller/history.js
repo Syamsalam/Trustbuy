@@ -4,6 +4,15 @@ const HistoryService = require('../services/history')
 
 class HistoryController {
 
+    static CreateHistory = roleValidations(3, async (req,res,next) => {
+        try {
+            const history = await HistoryService.createHistory(req.body,req.user)
+            return handleServerResponse(res,history.status,history.message,history.data)
+        } catch (err) {
+            next(err)
+        }
+    })
+
     static HistoryJastip = roleValidations(3, async (req,res,next) => {
         try {
             const history = await HistoryService.historyJastip(req.user)

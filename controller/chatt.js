@@ -1,4 +1,4 @@
-const ChattService = require('../services/ChattService');
+const ChattService = require('../services/chatt')
 
 class ChattController {
     // CREATE
@@ -14,15 +14,15 @@ class ChattController {
 
     // READ
     static async getChattAll(req, res) {
-        const userId = req.params.userId;
+        const userId = req.user.id;
         const result = await ChattService.getChattAll(userId);
         res.status(result.status).json(result);
     }
 
     static async getChatt(req, res) {
-        const senderId = req.user.id;
-        const receiverId = parseInt(req.params.receiverId);
-        const result = await ChattService.getChatt(senderId, receiverId);
+        const userDua = req.user.id;
+        const userSatu = parseInt(req.params.id);
+        const result = await ChattService.getChatt(userDua, userSatu);
         res.status(result.status).json(result);
     }
 }

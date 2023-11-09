@@ -13,6 +13,7 @@ const {
 const JastipController = require('../controller/jastip');
 const formidable = require('formidable');
 const sharp = require('sharp');
+const ChattController = require('../controller/chatt');
 
 const storage = multer.diskStorage({
     destination: (req,file,cb) => {
@@ -73,6 +74,7 @@ router.post('/jastip/create-product', auth, ProducController.CreateProduct)
 
 .get('/jastip/all-orders', auth, OrderController.AllOrders)
 
+.post('/jastip/create-history',auth, HistoryController.CreateHistory)
 .get('/jastip/history-jastip', auth, HistoryController.HistoryJastip)
 .get('/jastip/history-jastip-detail', auth, HistoryController.HistoryJastipDetails)
 
@@ -103,6 +105,9 @@ router.get('/common/profile', auth, CommonController.GetProfile);
 router.post('/common/upload-profile', auth,CommonController.UploadProfile);
 router.put('/common/edit-profile', auth, CommonController.UpdateProfile);
 router.put('/common/update-status', auth, OrderController.UpdateOrderVerify);
+router.post('/common/send-chatt/:id', auth,ChattController.createChatt);
+router.get('/common/get-chatt-all',auth,ChattController.getChattAll);
+router.get('/common/get-chatt/:id',auth,ChattController.getChatt);
 
 
 //Admin

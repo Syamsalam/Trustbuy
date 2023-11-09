@@ -436,7 +436,7 @@ class OrderService {
 
     static async updateOrderStatus(data) {
         try {
-            // console.log(data)
+            console.log(data)
             const order = await prisma.orders.update({
                 where: {
                     id: Number(data.id)
@@ -470,6 +470,20 @@ class OrderService {
                     status_id: Number(data.status_id),
                 }
             })
+
+            if(order.status_id === 9) {
+                await prisma.orders.update({
+                    where: {
+                        id: Number(data.id)
+                    },
+                    data: {
+                        verification: 'confirm'
+                    }
+                
+                })
+            }
+
+        
             return {
                 status: 200,
                 message: "Berhasil Mengubah Status Order",
@@ -530,7 +544,9 @@ class OrderService {
                                 select: {
                                     image: true
                                 }
-                            }
+                            },
+                            username:true,
+                            id: true
                         }
                     },
                     order_items: true,
