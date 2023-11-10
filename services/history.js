@@ -3,49 +3,47 @@ const prisma = new PrismaClient();
 class HistoryService {
 
     //create history
-    static async createHistory(id,users) {
+    static async createHistory(datas,users) {
         try{
 
-            const user = await prisma.users.findUnique({
+            const order = await prisma.orders.findFirst({
                 where: {
-                    id: Number(users.id)
+                    jastip_id: Number(users.id),
+                    id: Number(datas.id)
                 },
-                include: {
-                    orders: {
-                        where: {
-                            id: Number(id)
-                        },
-                        select: {
-                            id:true,
-                            payment: {
-                                select: {
-                                    id: true
-                                }
-                            },
-                            user_id: true,
-                            jastip_id: true
-                        }
-
-                    },
+                select: {
+                    id: true,
+                    jastip_id: true,
+                    user_id: true
 
                 }
             })
+            // console.log("data : "+user);
+            const pembayaran = await prisma.payment.findFirst({
+                where: {
+                    order_id: Number(order.id)
+                }
+            })
 
-            const data = user.orders[0];
+            console.log(pembayaran)
+
+
+            const data = {
+                id_user: order.user_id,
+                id_jastip:order.jastip_id,
+                payment_id:Number(pembayaran.id),
+                orders_id:order.id,
+                history_time: new Date()
+            }
+
 
             const history = await prisma.history.create({
-                data: {
-                    id_user: Number(data.user_id),
-                    id_jastip: Number(data.jastip_id),
-                    id_payment: Number(data.payment.id),
-                    id_order: Number(data.id),
-                    history_time: new Date()
-                }
+                data:data
             })
             return {
                 status: 200,
                 message: "Berhasil Membuat History",
-                data: history,
+                data: null
             }
         } catch(err) {
             return {
@@ -61,22 +59,15 @@ class HistoryService {
         try{
             const history = await prisma.history.findMany({
                 where: {
-                    id_jastip:Number(user.id)
+                    OR: [
+                        {id_jastip:Number(user.id)},
+                        {id_user:Number(user.id)}
+                    ]
                 },
                 include:{
                    payment:{
-                     select:{
-                        amount: true,
-                        payment_date: true
-                     }
-                   },
-                   users_history_id_jastipTousers: {
                     select:{
-                        jastiper_post: {
-                            select: {
-                                judul: true,
-                            }
-                        }
+                        total_pembayaran: true
                     }
                    },
                    orders: {
@@ -88,22 +79,12 @@ class HistoryService {
                         }
                     }
                    },
-                   
                 }
-            })
-
-            let totalAmount = 0
-            history.forEach((item)=>{
-                totalAmount += Number(item.payment.amount)
-            })
-
-            history.push({
-                totalAmount
-            })  
+            }) 
             return {
                 status: 200,
-                data: history,
-                message: 'success get history jastip'
+                message: 'success get history jastip',
+                data: history
             }
         }catch(err){
             return {
@@ -119,37 +100,32 @@ class HistoryService {
         try{
             const history = await prisma.history.findMany({
                 where: {
-                    id_user:Number(user.id),
-                    // history_time:{
-                    //     gte:time
-                    // }
+                    OR: [
+                        {id_jastip:Number(user.id)},
+                        {id_user:Number(user.id)}
+                    ]
                 },
-                include: {
-                    users: {
-                        select: {
-                            username: true,
-                            user_details: {
-                                select: {
-                                    nama:true,
-                                }
-                            }
-                        }
-                    },
-                    users_history_id_jastipTousers: {
-                        select:{
-                            jastiper_post: {
-                                select: {
-                                    judul: true,
-                                }
+                include:{
+                   payment:{
+                    select:{
+                        total_pembayaran: true
+                    }
+                   },
+                   orders: {
+                    select: {
+                        jastiper_post: {
+                            select: {
+                                judul: true
                             }
                         }
                     }
+                   },
                 }
-            })
+            }) 
             return {
                 status: 200,
-                data: history,
-                message: 'success get history user'
+                message: 'success get history jastip',
+                data: history
             }
         }catch(err){
             return {

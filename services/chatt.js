@@ -25,7 +25,7 @@ class ChattService {
     // READ
     static async getChattAll(userId) {
         try {
-            console.log(userId)
+            // console.log(userId)
             const users = await prisma.users.findMany({
                 where: {
 

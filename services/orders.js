@@ -384,7 +384,9 @@ class OrderService {
                                 select: {
                                     image: true
                                 }
-                            }
+                            },
+                            id: true,
+                            username: true
                         }
                     },
                 }
@@ -436,7 +438,7 @@ class OrderService {
 
     static async updateOrderStatus(data) {
         try {
-            console.log(data)
+            // console.log(data)
             const order = await prisma.orders.update({
                 where: {
                     id: Number(data.id)

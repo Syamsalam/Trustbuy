@@ -6,6 +6,7 @@ class HistoryController {
 
     static CreateHistory = roleValidations(3, async (req,res,next) => {
         try {
+            console.log(req?.body);
             const history = await HistoryService.createHistory(req.body,req.user)
             return handleServerResponse(res,history.status,history.message,history.data)
         } catch (err) {
