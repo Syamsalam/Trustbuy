@@ -37,7 +37,6 @@ class OrderService {
             const order = await prisma.orders.create({
                 data: {
                     ...datas,
-                    verification: 'confirm'
                 }
             })
 
@@ -57,18 +56,9 @@ class OrderService {
     }
 
     //ini ke jastip
-    static async createOrderItems(data) {
+    static async createOrderItems(data,user) {
         try {
             // console.log(data)
-
-            await prisma.orders.update({
-                where: {
-                    id: Number(data.id)
-                },
-                data: {
-                    status_id: 4
-                }
-            })
 
             const order = await prisma.orders.findFirst({
                 where: {
@@ -80,6 +70,20 @@ class OrderService {
                 }
 
             })
+
+            const getSaldo = await prisma.saldo.findUnique({
+                where: {
+                    jastiper_id: Number(user.id)
+                }
+            })
+
+            if(getSaldo.saldo <= 0) {
+                return {
+                    status: 204,
+                    message: "Saldo anda tidak mencukupi",
+                    data: null
+                }
+            }
 
 
             if (order != null) {
@@ -101,6 +105,7 @@ class OrderService {
                     const totalSubtotal = order_items.reduce((total, item) => {
                         return total + (Number(item.subtotal) || 0);
                     }, 0);
+
                     let createdPayment = {
                         order_id: 0,
                         // payment_date: "", //belum ada
@@ -123,9 +128,48 @@ class OrderService {
 
                     createdPayment.total_pembayaran = Number(totalSubtotal) + Number(createdPayment.biaya_app) + Number(createdPayment.biaya_jastip) + Number(createdPayment.biaya_ongkir)
 
-                        await prisma.payment.create({
-                            data: createdPayment
+
+
+                    const updatedSaldo = Number(getSaldo.saldo) - Number(createdPayment.biaya_app)
+                    
+                    if(updatedSaldo < 0) {
+
+                        await prisma.order_items.deleteMany({
+                            where: {
+                                order_id: Number(order.id)
+                            }
                         })
+
+                        return {
+                            status: 204,
+                            message: "Saldo anda tidak mencukupi",
+                            data: null
+                        }
+                    } else {
+                        
+                        await prisma.saldo.update({
+                            where: {
+                                jastiper_id: Number(user.id)
+                            },
+                            data: {
+                                saldo: Number(updatedSaldo)
+                            }
+                        })
+                    }
+ 
+                    
+                    await prisma.payment.create({
+                            data: createdPayment
+                    })
+
+                    await prisma.orders.update({
+                        where: {
+                            id: Number(data.id)
+                        },
+                        data: {
+                            status_id: 4
+                        }
+                    })
                 }
 
             }

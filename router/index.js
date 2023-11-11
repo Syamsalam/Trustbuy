@@ -45,6 +45,7 @@ const profileFile = upload.single('photoProfile')
 //auth
 router.post('/register', registerValidation, AuthController.register);
 router.post('/register-jastip', registerValidation, AuthController.registerJastip);
+router.post('/register-admin',registerValidation, AuthController.registerAdmin);
 router.post('/login', loginValidation, AuthController.login);
 
 //image

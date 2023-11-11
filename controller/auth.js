@@ -10,7 +10,8 @@ const {
 
 const {
     config
-} = require('../auth/passport-jwt')
+} = require('../auth/passport-jwt');
+const { createSaldo } = require('../services/saldo');
 
 class AuthController {
 
@@ -57,12 +58,39 @@ class AuthController {
                 message: "Username sudah digunakan , Akun tidak dapat dibuat",
                 data: null
             })
-        }       
+        }
         const user = await createUser(req.body , 3)
+        await createSaldo(user)
         return res.status(200).json({
             status: 200,
             message: "Berhasil membuat user baru",
             data: user
+        })
+    }
+
+    static async registerAdmin(req,res) {
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return res.status(400).json({
+                status: 400,
+                message: errors.array(),
+                data: "Kelengkapan data tidak sesuai"
+            })
+        }
+        const { username } = req.body
+        const userExist = await searchUser(username)
+        if (userExist) {
+            return res.status(400).json({
+                status: 400,
+                message: "Username sudah digunakan , Akun tidak dapat dibuat",
+                data: null
+            })
+        }       
+        await createUser(req.body , 1)
+        return res.status(200).json({
+            status: 200,
+            message: "Berhasil membuat user baru",
+            data: null
         })
     }
 

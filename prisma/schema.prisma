@@ -118,6 +118,7 @@ model users {
   jastiper_post                    jastiper_post[]
   orders                           orders[]
   orders_orders_jastip_idTousers   orders[]        @relation("orders_jastip_idTousers")
+  saldo                            saldo?
   role                             role            @relation(fields: [role_id], references: [id], onUpdate: Restrict, map: "users_ibfk_1")
   user_details                     user_details    @relation(fields: [user_details_id], references: [id], onUpdate: Restrict, map: "users_ibfk_2")
 
@@ -181,6 +182,12 @@ model chatt {
 
   @@index([receiver_id], map: "receiver_id")
   @@index([sender_id], map: "sender_id")
+}
+
+model saldo {
+  jastiper_id Int   @id
+  saldo       Int?
+  users       users @relation(fields: [jastiper_id], references: [id], onUpdate: Restrict, map: "saldo_ibfk_1")
 }
 
 enum jastiper_post_aktif {

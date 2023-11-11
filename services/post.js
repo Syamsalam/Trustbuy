@@ -206,6 +206,25 @@ class PostService {
     static async checkStatusPost(user) {
         try {
 
+                const users = await prisma.users.findFirst({
+                    where: {
+                        id: Number(user.id)
+                    },
+                    select: {
+                        saldo: {
+                            select: {
+                                saldo: true,
+                            }
+                        }
+                    }
+                })
+
+                if(users.saldo.saldo < 10000) return {
+                    status: 204,
+                    message: "Saldo anda kurang dari 10000",
+                    data: null
+                }
+
                 const post = await prisma.jastiper_post.findMany({
                     where: {
                         user_id: Number(user.id)
@@ -214,6 +233,9 @@ class PostService {
                         aktif: true
                     }
                 })
+
+
+
     
                 if(post.length == 0) return {
                     status: 404,
@@ -245,31 +267,56 @@ class PostService {
                     id: Number(user.id)   
                 },
                 select : {
+                    id: true,
                     jastiper_post: {
                         select: {
                             aktif: true
                         }
-                    } 
-                }
-            })
-
-            await prisma.jastiper_post.updateMany({
-                where : {
-                    users : {
-                        id: Number(user.id)
+                    },
+                    saldo: {
+                        select: {
+                            saldo: true,
+                        }
                     }
-                },
-                data : {
-                    aktif : prev.jastiper_post[0].aktif == "aktif" ? "non_aktif" : "aktif"
                 }
             })
 
-            return {
-                status : 200,
-                message : "Berhasil Mengubah Status",
-                data : null
+            if(prev.saldo.saldo < 10000) {
+                await prisma.jastiper_post.updateMany({
+                    where: {
+                        users: {
+                            id: prev.id
+                        }
+                    },
+                    data: {
+                        aktif: "non_aktif"
+                    }
+                })
+                return {
+                    status : 204,
+                    message : "Saldo anda kurang dari 10000",
+                    data : null
+                }
+            } else{
+
+                await prisma.jastiper_post.updateMany({
+                    where : {
+                        users : {
+                            id: Number(user.id)
+                        }
+                    },
+                    data : {
+                        aktif : prev.jastiper_post[0].aktif == "aktif" ? "non_aktif" : "aktif"
+                    }
+                })
+                
+                return {
+                    status : 200,
+                    message : "Berhasil Mengubah Status",
+                    data : null
+                }
             }
-        
+
         } catch (err) {
             return {
                 status : 500,

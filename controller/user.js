@@ -18,8 +18,10 @@ class UserController {
     static async GetProfile(req,res) {
         try{
             const profile = await UserService.getProfile(req.user);
+            // console.log(profile)
             return res.status(profile.status).json(profile.data);
         } catch (err) {
+            console.log(err)
             res.status(500).json(err);
         }
     }

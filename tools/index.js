@@ -33,26 +33,50 @@ const searchUser =  async (username) => {
 
 const createUser = async (data , idRole) => {
     try{
-        const user = await prisma.users.create({
-            data: {
-                email: data.email,
-                username: data.username,
-                password: generateHashedPassword(data.password),
-                role: {
-                    connect: {
-                        id: idRole
-                    }
-                },
-                user_details :{
-                    create :{
-                        alamat: data.alamat,
-                        nama: data.nama,
-                        nomor_telepon: data.nomor_telepon,
-                        data_identifikasi: data?.data_identifikasi ?? null
-                    }
+
+        const userData = {
+            email: data.email,
+            username: data.username,
+            password: generateHashedPassword(data.password),
+            role : {
+                connect:{
+                    id: Number(idRole)
                 }
-            }  
-        })
+            },
+            user_details: {
+                create: {
+                    alamat: data.alamat,
+                    no_hp: data.no_hp,
+                    nama: data.nama,
+                    nomor_telepon: data.nomor_telepon,
+                    data_identifikasi: data.data_identifikasi ?? null,
+                },
+            },
+
+        }
+
+        let user;
+
+        if(idRole != 3) {
+             user = await prisma.users.create({
+                data: userData
+                  
+            })
+        } else {
+             user = await prisma.users.create({
+                data: {
+                    ...userData,
+                    saldo: {
+                        create: {
+                            saldo:0,
+                        },
+                    },
+                }
+            })
+        }
+        
+        
+        
         return user
     }catch(err){
         console.log(err.message);

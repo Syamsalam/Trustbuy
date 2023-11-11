@@ -26,7 +26,7 @@ class OrderController {
     static CreateOrderItems = roleValidations(3, async (req,res,next) => {
         try {
             // console.log(req)
-            const order = await OrderService.createOrderItems(req.body);
+            const order = await OrderService.createOrderItems(req.body,req.user);
             return handleServerResponse(res,order.status,order.message,order.data);
         } catch (err) {
             next(err)

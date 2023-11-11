@@ -106,7 +106,12 @@ class UserService {
                                             image: true
                                         }
                                     },
-                                    username: true
+                                    username: true,
+                                    saldo: user.role === 3 && {
+                                        select: {
+                                            saldo: true,
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -114,16 +119,19 @@ class UserService {
                 }
             })
 
+            
+
             return {
                 status: 200,
                 message: "Data Profil user berhasil didapat",
                 data: data.user_details
             }
         } catch (err) {
+            console.log(err)
             return {
                 status: 500,
                 message: "Data profil user gagal didapat",
-                data: null
+                data: err.message
             }
         }
     }    
