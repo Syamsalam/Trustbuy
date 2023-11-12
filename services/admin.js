@@ -1,11 +1,11 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const { countUser, Riyawat } = require('../tools/index')
+const { countUser, Riwayat } = require('../tools/index')
 class AdminService {
 
     static detailJastip = async (id) => {
         try {
-            let riyawat = []
+            let riwayat = []
             const jastip = await prisma.users.findUnique({
                 where: {
                     id: Number(id)
@@ -32,13 +32,19 @@ class AdminService {
             })
 
             jastip.saldo = dataTotal[0].saldo.saldo
-            history.forEach(async (item) => {
-                let ri = await Riyawat(item.id_user, item.orders_id, item.payment_id)
-                console.log(ri, 'ini ri');
-                await riyawat.push(ri)
-                console.log(riyawat, 'ini riyawat');
+            // history.forEach(async (item) => {
+            //     let ri = await Riwayat(item.id_user, item.orders_id, item.payment_id)
+            //     console.log(ri, 'ini ri');
+            //     return ri;
+            // })
+            const promises = history.map(async (item) => {
+                let ri = await Riwayat(item.id_user,item.orders_id,item.payment_id, item.history_time);
+                console.log(ri, "ini adalah ri");
+                return ri;
             })
-            jastip.riyawat = riyawat
+
+            jastip.riwayat = await Promise.all(promises)
+            console.log(jastip.riwayat, "ini riwayat")
             return {
                 status: 200,
                 message: "Berhasil Mendapat User",
@@ -70,37 +76,16 @@ class AdminService {
             }
         }
     }
-    static async dataUsers() {
+    static async dataUsers(role_id) {
         try {
             const data = await prisma.users.count({
                 where: {
-                    role_id: 2,
+                    role_id: Number(role_id),
                 }
             })
             return {
                 status: 200,
                 message: "Berhasil mendapat user",
-                data: data
-            }
-        } catch (err) {
-            return {
-                status: 500,
-                message: "gagal mendapat user",
-                data: null
-            }
-        }
-    }
-
-    static async dataJastip() {
-        try {
-            const data = await prisma.users.count({
-                where: {
-                    role_id: 3
-                }
-            })
-            return {
-                status: 200,
-                message: "Berhasil Mendapat Jastiper",
                 data: data
             }
         } catch (err) {
@@ -155,6 +140,7 @@ class AdminService {
                     }
                 }
             })
+
             return {
                 status: 200,
                 message: "Berhasil Validasi",
@@ -164,6 +150,91 @@ class AdminService {
             return {
                 status: 500,
                 message: "Gagal Validasi",
+                data: null
+            }
+        }
+    }
+
+    static async verifyJastip(page,search) {
+        try {
+            const jastip = await prisma.users.findMany({
+                where: {
+                    role_id: 3,
+                    username: {
+                        contains: search == null ? "" : search
+                    }, 
+                    saldo: null
+                },
+                select: {
+                    email: true,
+                    username: true,
+                    user_details: {
+                        select: {
+                            nomor_telepon: true
+                        }
+                    }
+                },
+                take: 10,
+                skip: (isNaN(page)?0 : page-1) * 10
+            })
+
+
+            jastip.forEach(jast => {
+                jast.nomor_telepon = jast.user_details.nomor_telepon
+                delete jast.user_details
+            })
+
+            return{
+                status:200,
+                message: "Berhasil Mengambil Semua Data",
+                data: jastip
+            }
+        } catch(err) {
+            return {
+                status:500,
+                message: "Gagal Mengambil semua data",
+                data: null
+            }
+        }
+    }
+
+    static async detailJastipVerify(id) {
+        try {
+            const jastip = await prisma.users.findFirst({
+                where: {
+                    id: Number(id)
+                },
+                select: {
+                    id: true,
+                    username: true,
+                    email: true,
+                    user_details: {
+                        select: {
+                            data_identifikasi: true,
+                            alamat: true,
+                            nomor_telepon: true
+
+                        }
+                    }
+                }
+            })
+
+            jastip.nik = jastip.user_details.data_identifikasi
+            jastip.nomo_hp = jastip.user_details.nomor_telepon
+            jastip.alamat = jastip.user_details.alamat
+
+            delete jastip.user_details
+
+            return{
+                status:200,
+                message: "Berhasil Mengambil Data Jastip",
+                data:jastip
+            }
+        } catch(err) {
+            console.log(err)
+            return{
+                status:500,
+                message: "Gagal Mengambil Data jastip",
                 data: null
             }
         }

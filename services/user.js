@@ -6,36 +6,83 @@ const { request } = require('express');
 const prisma = new PrismaClient();
 
 class UserService {
-    static async getAllUsers(limit) {
+    static async getAllUsers(page, search) {
         try {
+            const count = await prisma.users.count({
+                where: {
+                    role_id: 3,
+                    username : {
+                        contains : search == null ? "" : search
+                    },
+                    NOT : {
+                        saldo : null
+                    }
+                     
+                },
+            })
             const users = await prisma.users.findMany({
                 where: {
-                    role_id: 2
+                    role_id: 3,
+                    username : {
+                        contains : search == null ? "" : search
+                    },
+                    NOT : {
+                        saldo : null
+                    }
+                     
                 },
-                include: {
-                    role: true,
-                    user_details: true,
+                select: {
+                    username : true,
+                    id : true,
+                    history_history_id_jastipTousers: {
+                        select: {
+                            payment: {
+                                select: {
+                                    total_pembayaran: true,
+                                }
+                            }
+                        }
+                    },
+                    jastiper_post:{
+                        select: {
+                            aktif: true,
+                        }
+                    }
                 },
-                take: Number(limit) ? Number(limit) : undefined
+                take: 10,
+                skip : (isNaN(page) ? 0 : page-1) * 10
             });
 
-            users.forEach(user => {
-                user.role = user.role.role_name
-                if (user.user_details) {
-                    delete user.user_details.id
+            
+            const resultUsers = users.map(user => {
+                const newUser = {}
+
+                if(user.jastiper_post.length > 0) {
+                    if(user.jastiper_post[0].aktif = "aktif") {
+                        newUser.status = "Online"
+                    } else {
+                        newUser.status = "Offline"
+                    }
+                } else {
+                    newUser.status = "Offline"
                 }
-                delete user.password;
-                delete user.id;
-                delete user.role_id;
-                delete user.user_details_id;
-                delete user.user_details.data_identifikasi;
+                console.log(user.history_history_id_jastipTousers)
+                newUser.pendapatan = user.history_history_id_jastipTousers.reduce((a,b) => {
+                    // console.log(b.payment[0]?.total_pembayaran)
+                    return parseInt(a) + ( isNaN(b.payment.total_pembayaran.toNumber()) ? 0:  b.payment.total_pembayaran.toNumber() )
+                }, 0)   
+
+                newUser.username = user.username
+                newUser.id = user.id
+                return newUser
             })
             return {
                 status: 200,
                 message: "Berhasil mengambil data user",
-                data: users
+                data: {count, resultUsers}
             }
         } catch (err) {
+            console.error(err)
             return {
                 status: 500,
                 message: "Masalah pada saat mengambil data user",

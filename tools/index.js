@@ -77,13 +77,16 @@ const countUser = async (role_id) => {
 }
 
 
-const Riyawat = async (id_user, orders_id, payment_id) => {
-    console.log(id_user, orders_id, payment_id, 'ini riyawat');
+const Riwayat = async (id_user, orders_id, payment_id, history_times) => {
+    console.log(id_user, orders_id, payment_id, 'ini Riwayat');
     try {
         let respon = []
         const user = await prisma.users.findUnique({
             where: {
                 id: Number(id_user)
+            },
+            select: {
+                username: true,
             }
         })
         const orders = await prisma.orders.findUnique({
@@ -92,17 +95,33 @@ const Riyawat = async (id_user, orders_id, payment_id) => {
             }
         })
 
-        const payment = await prisma.payment.findUnique({
+        const post = await prisma.jastiper_post.findUnique({
             where: {
-                id: Number(payment_id)
+                id: Number(orders.post_id)
+            },
+            select: {
+                judul:true,
             }
         })
 
+        const payment = await prisma.payment.findUnique({
+            where: {
+                id: Number(payment_id)
+            },
+            select: {
+                total_pembayaran:true,
+            }
+        })
+
+        const history = {
+            history_time: history_times
+        }
 
 
-        respon.push(user.username)
-        respon.push(orders)
-        respon.push(payment.total_pembayaran)
+        respon.push(user)
+        respon.push(post)
+        respon.push(payment)
+        respon.push(history)
 
         return respon
     } catch (err) {
@@ -116,5 +135,5 @@ module.exports = {
     searchUser,
     createUser,
     countUser,
-    Riyawat
+    Riwayat
 }

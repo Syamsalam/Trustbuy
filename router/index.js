@@ -112,11 +112,12 @@ router.get('/common/get-chatt/:id', auth, ChattController.getChatt);
 
 
 //Admin
-router.get('/admin/count-users', auth, AdminController.CountUsers);
-router.get('/admin/count-jastip', auth, AdminController.CountJastip);
+router.get('/admin/count-users/:role_id', auth, AdminController.CountUsers);
 router.get('/admin/Total-amount', auth, AdminController.TotalJastipAmount);
 router.delete('/admin/delete-user', auth, AdminController.DeleteUser);
-router.get('/admin/all-users/:limit', auth, AdminController.AllUsers);
+router.get('/admin/all-users', auth, AdminController.AllUsers);
+router.get('/admin/all-users-verification', auth, AdminController.VerifyAll);
+router.get('/admin/users-verification/:id', auth, AdminController.VerifJastip);
 router.get('/admin/detail-jastip/:id', auth, AdminController.DetailJastip);
 router.get('/admin/all-jastip', auth, AdminController.Alljastip);
 router.get('/admin/all-product', auth, AdminController.GetAllProduct);

@@ -18,7 +18,7 @@ class AdminController {
     })
     static CountUsers = roleValidations(1, async (req, res, next) => {
         try {
-            const users = await AdminService.dataUsers();
+            const users = await AdminService.dataUsers(req.params.role_id);
             return handleServerResponse(res, users.status, users.message, users.data);
         } catch (err) {
             next(err)
@@ -56,7 +56,7 @@ class AdminController {
     //Admin untuk Lihat semua user
     static AllUsers = roleValidations(1, async (req, res, next) => {
         try {
-            const users = await UserService.getAllUsers(req.params.limit);
+            const users = await UserService.getAllUsers(parseInt(req.query.page), req.query.search);
             return handleServerResponse(res, users.status, users.message, users.data);
         } catch (err) {
             next(err)
@@ -97,6 +97,24 @@ class AdminController {
             return handleServerResponse(res, post.status, post.message, post.data);
         } catch (err) {
             next(err);
+        }
+    })
+
+    static VerifyAll = roleValidations(1, async (req,res,next) => {
+        try{
+            const user = await AdminService.verifyJastip(parseInt(req.query.page), req.query.search);
+            return handleServerResponse(res,user.status,user.message,user.data);
+        } catch(err) {
+            next(err)
+        }
+    }) 
+
+    static VerifJastip = roleValidations(1,async (req,res,next) => {
+        try {
+            const user = await AdminService.detailJastipVerify(req.params.id);
+            return handleServerResponse(res,user.status,user.message,user.data);
+        } catch(err) {
+            next(err)
         }
     })
 
