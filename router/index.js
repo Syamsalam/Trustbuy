@@ -1,5 +1,5 @@
 const express = require('express');
-const { Order } = require('../controller');
+const { Order, Admin } = require('../controller');
 const router = express.Router();
 const path = require('path');
 const multer = require('multer');
@@ -47,6 +47,7 @@ router.post('/register', registerValidation, AuthController.register);
 router.post('/register-jastip', registerValidation, AuthController.registerJastip);
 router.post('/register-admin',registerValidation, AuthController.registerAdmin);
 router.post('/login', loginValidation, AuthController.login);
+router.get('/auth',auth,AuthController.authenticateUser);
 
 //image
 // router.post('/images/upload-profile/:id', profileFile , ImageController.UploadProfile);
@@ -120,6 +121,7 @@ router.get('/admin/all-users', auth, AdminController.AllUsers);
 router.get('/admin/all-jastip', auth, AdminController.Alljastip);
 router.get('/admin/all-product', auth, AdminController.GetAllProduct);
 router.get('/admin/get-all-post', auth, AdminController.allPost);
+router.put('/admin/validasi-jastip',auth,Admin.validateJastip);
 
 router.get("/gambar/**", (req, res) => {
     res.sendFile(path.join(__dirname, `../images/photoprofile/${req.params[0]}`));

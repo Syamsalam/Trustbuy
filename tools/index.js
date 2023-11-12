@@ -34,7 +34,7 @@ const searchUser =  async (username) => {
 const createUser = async (data , idRole) => {
     try{
 
-        const userData = {
+        const user = await prisma.users.create({
             email: data.email,
             username: data.username,
             password: generateHashedPassword(data.password),
@@ -53,29 +53,8 @@ const createUser = async (data , idRole) => {
                 },
             },
 
-        }
+        })
 
-        let user;
-
-        if(idRole != 3) {
-             user = await prisma.users.create({
-                data: userData
-                  
-            })
-        } else {
-             user = await prisma.users.create({
-                data: {
-                    ...userData,
-                    saldo: {
-                        create: {
-                            saldo:0,
-                        },
-                    },
-                }
-            })
-        }
-        
-        
         
         return user
     }catch(err){

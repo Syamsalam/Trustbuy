@@ -91,6 +91,16 @@ class AdminController {
         }
     })
 
+
+    static validateJastip = roleValidations(1, async (req,res,next) => {
+        try {
+            const user = await AdminService.validateJastip(req.body)
+            return handleServerResponse(res,user.status,user.message,user.data); 
+        } catch(err) {
+            next(err)
+        }
+    })
+
 }
 
 module.exports = AdminController

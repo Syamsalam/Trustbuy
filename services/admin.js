@@ -72,6 +72,35 @@ class AdminService {
             }
          }
     }
+
+    static async validateJastip(data) {
+        try {
+            const id = Number(data.id)
+            const jastip = await prisma.users.update({
+                where: {
+                    id: Number(id)
+                },
+                data: {
+                    saldo: {
+                        create: {
+                            saldo: 0
+                        }
+                    }
+                }
+            })
+            return {
+                status: 200,
+                message: "Berhasil Validasi",
+                data: jastip
+            }
+        } catch (err) {
+            return {
+                status: 500,
+                message: "Gagal Validasi",
+                data: null
+            }
+        }
+    }
 }
 
-module.exports = AdminService
+module.exports = AdminService;

@@ -10,7 +10,7 @@ class SaldoService {
         try {
             const saldo = await prisma.saldo.create({
                 data: {
-                    user_id: user.id,
+                    jastiper_id: user.id,
                     saldo: 0
                 }
             })

@@ -3,7 +3,7 @@ const { PrismaClient } = require('@prisma/client')
 const prisma = new PrismaClient();
 const config = {
         secret: "trustBuy",
-        expiresIn: 60 * 60
+        expiresIn: 24 * 60 * 60 
 }
 const applyPassportStrategy = (passport) => {
     const options = {}

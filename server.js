@@ -25,7 +25,7 @@ server.use(passport.initialize());
     await prisma.$connect()
         .then(() => {
             console.log(`\nDatabase connected success`)
-            console.log(`Info : \n Server :${process.env.nameServer} \n Port :${process.env.port} \n Database :${process.env.databaseName}`);
+            // console.log(`Info : \n Server :${process.env.nameServer} \n Port :${process.env.port} \n Database :${process.env.databaseName}`);
             server.use('/api', apiRouter);
             server.get('/', (req, res) => {
                 return res.status(200).send({

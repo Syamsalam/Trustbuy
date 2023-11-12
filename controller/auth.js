@@ -60,7 +60,6 @@ class AuthController {
             })
         }
         const user = await createUser(req.body , 3)
-        await createSaldo(user)
         return res.status(200).json({
             status: 200,
             message: "Berhasil membuat user baru",
@@ -106,6 +105,7 @@ class AuthController {
             }
         })
 
+    
         if (!user) {
             return res.status(400).json({
                 status: 400,
@@ -118,14 +118,30 @@ class AuthController {
         if (user.password !== hashedPassword) {
             return res.status(400).json({
                 status: 400,
-                message: "Password salah"
+                message: "Email Atau Password salah"
             })
+        }
+
+        if(user.role_id === 3) {
+            const saldo = await prisma.saldo.findFirst({
+                where: {
+                    jastiper_id: Number(user.id)
+                }
+            })
+            if(!saldo) {
+                return res.status(204).json({
+                    status: 204,
+                    message:"Email Belum Terverifikasi"
+                })
+            }   
         }
 
         const token = jwt.sign({
             id: user.id,
             email: user.email,
-            username: user.username
+            username: user.username,
+            role_id : user.role_id,
+            
         }, config.secret, {
             expiresIn: config.expiresIn
         })
@@ -140,6 +156,26 @@ class AuthController {
                 token: token
             }
         })
+    }
+
+    static async authenticateUser(req,res){
+        try {
+            const token = req.headers.authorization;
+            const decoded = jwt.verify(token.replaceAll("Bearer", "").trim(), config.secret);
+
+            return res.status(200).json({
+                status: 200,
+                message: 'berhasil',
+                data: {
+                    user: decoded
+                }
+            })
+        } catch (err) {
+            return res.status(500).json({
+                status:500,
+                message: "gagal mendapatkan user"
+            })
+        }
     }
 
     static async forgetPassword() {
