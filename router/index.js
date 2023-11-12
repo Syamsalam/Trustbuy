@@ -16,14 +16,14 @@ const sharp = require('sharp');
 const ChattController = require('../controller/chatt');
 
 const storage = multer.diskStorage({
-    destination: (req,file,cb) => {
-        console.log(file , 'ini file')
+    destination: (req, file, cb) => {
+        console.log(file, 'ini file')
         if (file.fieldname === 'photoProfile') {
             cb(null, 'images/photoprofile')
         }
     },
-    filename: (req,file,cb) => {
-        cb(null,uuidv4() + path.extname(file.originalname));
+    filename: (req, file, cb) => {
+        cb(null, uuidv4() + path.extname(file.originalname));
     }
 })
 const UserController = require('../controller').User;
@@ -34,20 +34,19 @@ const ImageController = require('../controller').Image;
 const AuthController = require('../controller').Auth;
 const CommonController = require('../controller').Common;
 const AdminController = require('../controller').Admin;
+
 const auth = passport.authenticate('jwt', { session: false })
 
-const upload = multer({storage: storage});
-
-
-
+const upload = multer({ storage: storage });
 const profileFile = upload.single('photoProfile')
 
 //auth
 router.post('/register', registerValidation, AuthController.register);
 router.post('/register-jastip', registerValidation, AuthController.registerJastip);
-router.post('/register-admin',registerValidation, AuthController.registerAdmin);
+router.post('/register-admin', registerValidation, AuthController.registerAdmin);
 router.post('/login', loginValidation, AuthController.login);
-router.get('/auth',auth,AuthController.authenticateUser);
+router.get('/auth', auth, AuthController.authenticateUser);
+router.get('/test-server', auth, AuthController.serverTest);
 
 //image
 // router.post('/images/upload-profile/:id', profileFile , ImageController.UploadProfile);
@@ -58,45 +57,45 @@ router.get('/user/history-user', auth, HistoryController.HistoryUser)
 router.get('/user/history-user-detail', auth, HistoryController.HistoryUserDetails)
 router.get('/user/get-post-aktif', auth, UserController.getPostByStatus)
 router.get('/user/detail-profile', auth, UserController.GetUserDetail)
-router.post('/user/create-order',auth, OrderController.CreateOrder)
-router.get('/user/get-confirm-order',auth,OrderController.GetOrderForUser)
-router.get('/user/get-detail-order/:id',auth,OrderController.GetOrderItemsUser)
+router.post('/user/create-order', auth, OrderController.CreateOrder)
+router.get('/user/get-confirm-order', auth, OrderController.GetOrderForUser)
+router.get('/user/get-detail-order/:id', auth, OrderController.GetOrderItemsUser)
 
 //jastip
 router.post('/jastip/create-product', auth, ProducController.CreateProduct)
-.get('/jastip/product', auth, CommonController.GetProduct)
-.put('/jastip/update-product', auth, ProducController.UpdateProduct)
-.delete('/jastip/delete-product', auth, ProducController.DeleteProduct)
+    .get('/jastip/product', auth, CommonController.GetProduct)
+    .put('/jastip/update-product', auth, ProducController.UpdateProduct)
+    .delete('/jastip/delete-product', auth, ProducController.DeleteProduct)
 
-.post('/jastip/create-order-items', auth, OrderController.CreateOrderItems)
-.get('/jastip/order-items/:id',auth,OrderController.GetOrderItems)
+    .post('/jastip/create-order-items', auth, OrderController.CreateOrderItems)
+    .get('/jastip/order-items/:id', auth, OrderController.GetOrderItems)
 
-.put('/jastip/update-order', auth, OrderController.UpdateOrder)
-.delete('/jastip/delete-order/:id', auth, OrderController.DeleteOrder)
+    .put('/jastip/update-order', auth, OrderController.UpdateOrder)
+    .delete('/jastip/delete-order/:id', auth, OrderController.DeleteOrder)
 
-.get('/jastip/all-orders', auth, OrderController.AllOrders)
+    .get('/jastip/all-orders', auth, OrderController.AllOrders)
 
-.post('/jastip/create-history',auth, HistoryController.CreateHistory)
-.get('/jastip/history-jastip', auth, HistoryController.HistoryJastip)
-.get('/jastip/history-jastip-detail', auth, HistoryController.HistoryJastipDetails)
+    .post('/jastip/create-history', auth, HistoryController.CreateHistory)
+    .get('/jastip/history-jastip', auth, HistoryController.HistoryJastip)
+    .get('/jastip/history-jastip-detail', auth, HistoryController.HistoryJastipDetails)
 
-.put('/jastip/set-status', auth, JastipController.IsOnline)
+    .put('/jastip/set-status', auth, JastipController.IsOnline)
 
-.post('/jastip/create-post', auth, JastipController.createpost)
-.put('/jastip/update-post', auth, JastipController.updatePost)
-.get('/jastip/get-post', auth, JastipController.getPost)
-.get('/jastip/get-post/:id',auth,JastipController.getPostId)
+    .post('/jastip/create-post', auth, JastipController.createpost)
+    .put('/jastip/update-post', auth, JastipController.updatePost)
+    .get('/jastip/get-post', auth, JastipController.getPost)
+    .get('/jastip/get-post/:id', auth, JastipController.getPostId)
 
-.get('/jastip/detail-profile', auth, JastipController.GetJastipDetails)
-.put('/jastip/update-user', auth, JastipController.UpdateJastip)
+    .get('/jastip/detail-profile', auth, JastipController.GetJastipDetails)
+    .put('/jastip/update-user', auth, JastipController.UpdateJastip)
 
-.get('/jastip/order-titip',auth, OrderController.OrderByStatus)
-.put('/jastip/update-titip',auth,OrderController.UpdateOrderStatus)
+    .get('/jastip/order-titip', auth, OrderController.OrderByStatus)
+    .put('/jastip/update-titip', auth, OrderController.UpdateOrderStatus)
 
-.get('/jastip/biaya-jastip/:id', auth, OrderController.GetBiayaJastip)
+    .get('/jastip/biaya-jastip/:id', auth, OrderController.GetBiayaJastip)
 
-.put('/jastip/update-status', auth, JastipController.UpdateStatus)
-.get('/jastip/get-status-post',auth,JastipController.CheckStatus);
+    .put('/jastip/update-status', auth, JastipController.UpdateStatus)
+    .get('/jastip/get-status-post', auth, JastipController.CheckStatus);
 
 
 
@@ -104,12 +103,12 @@ router.post('/jastip/create-product', auth, ProducController.CreateProduct)
 //Common
 router.get('/common/photo-profile', auth, UserController.GetProfile)
 router.get('/common/profile', auth, CommonController.GetProfile);
-router.post('/common/upload-profile', auth,CommonController.UploadProfile);
+router.post('/common/upload-profile', auth, CommonController.UploadProfile);
 router.put('/common/edit-profile', auth, CommonController.UpdateProfile);
 router.put('/common/update-status', auth, OrderController.UpdateOrderVerify);
-router.post('/common/send-chatt/:id', auth,ChattController.createChatt);
-router.get('/common/get-chatt-all',auth,ChattController.getChattAll);
-router.get('/common/get-chatt/:id',auth,ChattController.getChatt);
+router.post('/common/send-chatt/:id', auth, ChattController.createChatt);
+router.get('/common/get-chatt-all', auth, ChattController.getChattAll);
+router.get('/common/get-chatt/:id', auth, ChattController.getChatt);
 
 
 //Admin
@@ -117,11 +116,12 @@ router.get('/admin/count-users', auth, AdminController.CountUsers);
 router.get('/admin/count-jastip', auth, AdminController.CountJastip);
 router.get('/admin/Total-amount', auth, AdminController.TotalJastipAmount);
 router.delete('/admin/delete-user', auth, AdminController.DeleteUser);
-router.get('/admin/all-users', auth, AdminController.AllUsers);
+router.get('/admin/all-users/:limit', auth, AdminController.AllUsers);
+router.get('/admin/detail-jastip/:id', auth, AdminController.DetailJastip);
 router.get('/admin/all-jastip', auth, AdminController.Alljastip);
 router.get('/admin/all-product', auth, AdminController.GetAllProduct);
 router.get('/admin/get-all-post', auth, AdminController.allPost);
-router.put('/admin/validasi-jastip',auth,Admin.validateJastip);
+router.put('/admin/validasi-jastip', auth, Admin.validateJastip);
 
 router.get("/gambar/**", (req, res) => {
     res.sendFile(path.join(__dirname, `../images/photoprofile/${req.params[0]}`));

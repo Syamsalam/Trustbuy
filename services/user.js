@@ -1,39 +1,52 @@
 const {
- PrismaClient
+    PrismaClient
 } = require('@prisma/client');
 const { request } = require('express');
 
 const prisma = new PrismaClient();
 
 class UserService {
-    static async getAllUsers() {
-        try{
+    static async getAllUsers(limit) {
+        try {
             const users = await prisma.users.findMany({
-                where:{
-                    role_id : 2
+                where: {
+                    role_id: 2
                 },
-                include:{
-                    role:true,
+                include: {
+                    role: true,
                     user_details: true,
-                }
+                },
+                take: Number(limit) ? Number(limit) : undefined
             });
+
+            users.forEach(user => {
+                user.role = user.role.role_name
+                if (user.user_details) {
+                    delete user.user_details.id
+                }
+                delete user.password;
+                delete user.id;
+                delete user.role_id;
+                delete user.user_details_id;
+                delete user.user_details.data_identifikasi;
+            })
             return {
-                status:200,
-                message:"Berhasil mengambil data user",
-                data : users
+                status: 200,
+                message: "Berhasil mengambil data user",
+                data: users
             }
-        }catch(err){
-           return {
-                status:500,
-                message:"Masalah pada saat mengambil data user",
-                data : null
-           }
+        } catch (err) {
+            return {
+                status: 500,
+                message: "Masalah pada saat mengambil data user",
+                data: null
+            }
         }
     }
 
     //get users
     static async getUser(id) {
-        try{
+        try {
             const user = await prisma.users.findUnique({
                 where: {
                     id: Number(id)
@@ -56,9 +69,8 @@ class UserService {
         }
     }
 
-    static async getDetailProfile(user){
+    static async getDetailProfile(user) {
         try {
-            console.log(user)
             const users = await prisma.users.findUnique({
                 where: {
                     id: Number(user.id)
@@ -89,15 +101,15 @@ class UserService {
 
     }
 
-    static async getProfile(user){
-        try{
+    static async getProfile(user) {
+        try {
 
             const data = await prisma.users.findFirst({
                 where: {
                     id: Number(user.id)
                 },
-                select : {
-                    user_details : {
+                select: {
+                    user_details: {
                         include: {
                             users: {
                                 select: {
@@ -119,7 +131,7 @@ class UserService {
                 }
             })
 
-            
+
 
             return {
                 status: 200,
@@ -134,22 +146,22 @@ class UserService {
                 data: err.message
             }
         }
-    }    
+    }
     //add users
     static async addUser(body) {
-        try{
-            const { username, email, password, role_id,user_details } = body;
+        try {
+            const { username, email, password, role_id, user_details } = body;
             const users = await prisma.users.create({
                 data: {
-                    username    : username,
-                    email       : email,
-                    password    : password,
-                    role     : {
-                        connect : {
-                            id : role_id
+                    username: username,
+                    email: email,
+                    password: password,
+                    role: {
+                        connect: {
+                            id: role_id
                         }
                     },
-                    user_details : {
+                    user_details: {
                         create: {
                             ...user_details,
 
@@ -158,12 +170,12 @@ class UserService {
                 }
             })
             return {
-                status:200,
+                status: 200,
                 message: "Berhasil Mengubah data user",
-                data : users
+                data: users
             }
         } catch (err) {
-            return{
+            return {
                 status: 500,
                 message: "Gagal Mengubah Data USer",
                 data: err.message
@@ -172,7 +184,7 @@ class UserService {
     }
 
     static async editUser(user, data) {
-        try{
+        try {
             const idUser = user.id
             const user_details_update = data.user_details
             console.log(idUser)
@@ -180,7 +192,7 @@ class UserService {
             const users = await prisma.users.update({
                 where: {
                     id: Number(idUser)
-                    
+
                 },
                 data: {
                     user_details: {
@@ -210,7 +222,7 @@ class UserService {
                 data: datas
             }
         } catch (err) {
-            return{
+            return {
                 status: 500,
                 message: "Gagal Mengubah Data User",
                 data: err.message
@@ -219,19 +231,19 @@ class UserService {
     }
 
     static async deleteUser(user) {
-        try{
+        try {
             const users = await prisma.users.delete({
                 where: {
                     id: Number(user.id)
                 }
             })
-            return({
+            return ({
                 status: 200,
                 message: "Berhasil Delete Data User",
                 data: users
             })
         } catch (err) {
-            return{
+            return {
                 status: 500,
                 message: "Gagal Delete Data User",
                 data: null

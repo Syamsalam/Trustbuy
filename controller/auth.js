@@ -32,8 +32,8 @@ class AuthController {
                 message: "Username sudah digunakan , Akun tidak dapat dibuat",
                 data: null
             })
-        }       
-        await createUser(req.body , 2)
+        }
+        await createUser(req.body, 2)
         return res.status(200).json({
             status: 200,
             message: "Berhasil membuat user baru",
@@ -50,7 +50,7 @@ class AuthController {
                 data: "Kelengkapan data tidak sesuai"
             })
         }
-        const { username, email, password} = req.body
+        const { username, email, password } = req.body
         const userExist = await searchUser(username)
         if (userExist) {
             return res.status(400).json({
@@ -59,7 +59,7 @@ class AuthController {
                 data: null
             })
         }
-        const user = await createUser(req.body , 3)
+        const user = await createUser(req.body, 3)
         return res.status(200).json({
             status: 200,
             message: "Berhasil membuat user baru",
@@ -67,7 +67,7 @@ class AuthController {
         })
     }
 
-    static async registerAdmin(req,res) {
+    static async registerAdmin(req, res) {
         const errors = validationResult(req)
         if (!errors.isEmpty()) {
             return res.status(400).json({
@@ -84,8 +84,8 @@ class AuthController {
                 message: "Username sudah digunakan , Akun tidak dapat dibuat",
                 data: null
             })
-        }       
-        await createUser(req.body , 1)
+        }
+        await createUser(req.body, 1)
         return res.status(200).json({
             status: 200,
             message: "Berhasil membuat user baru",
@@ -95,17 +95,17 @@ class AuthController {
 
     static async login(req, res) {
         const { email, password } = req.body
-        
+
         const user = await prisma.users.findFirst({
             where: {
-                OR : [
-                    {email: email},
-                    {username: email}
+                OR: [
+                    { email: email },
+                    { username: email }
                 ]
             }
         })
 
-    
+
         if (!user) {
             return res.status(400).json({
                 status: 400,
@@ -122,26 +122,26 @@ class AuthController {
             })
         }
 
-        if(user.role_id === 3) {
+        if (user.role_id === 3) {
             const saldo = await prisma.saldo.findFirst({
                 where: {
                     jastiper_id: Number(user.id)
                 }
             })
-            if(!saldo) {
+            if (!saldo) {
                 return res.status(204).json({
                     status: 204,
-                    message:"Email Belum Terverifikasi"
+                    message: "Email Belum Terverifikasi"
                 })
-            }   
+            }
         }
 
         const token = jwt.sign({
             id: user.id,
             email: user.email,
             username: user.username,
-            role_id : user.role_id,
-            
+            role_id: user.role_id,
+
         }, config.secret, {
             expiresIn: config.expiresIn
         })
@@ -158,7 +158,7 @@ class AuthController {
         })
     }
 
-    static async authenticateUser(req,res){
+    static async authenticateUser(req, res) {
         try {
             const token = req.headers.authorization;
             const decoded = jwt.verify(token.replaceAll("Bearer", "").trim(), config.secret);
@@ -172,7 +172,7 @@ class AuthController {
             })
         } catch (err) {
             return res.status(500).json({
-                status:500,
+                status: 500,
                 message: "gagal mendapatkan user"
             })
         }
@@ -182,7 +182,21 @@ class AuthController {
         try {
 
         } catch (err) {
-            
+
+        }
+    }
+
+    static async serverTest(req, res) {
+        try {
+            return res.status(200).json({
+                status: 200,
+                message: "Server is running by syamsul-alam"
+            })
+        } catch (err) {
+            return res.status(500).json({
+                status: 500,
+                message: "Server Error"
+            })
         }
     }
 }
