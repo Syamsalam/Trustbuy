@@ -80,7 +80,7 @@ const countUser = async (role_id) => {
 const Riwayat = async (id_user, orders_id, payment_id, history_times) => {
     console.log(id_user, orders_id, payment_id, 'ini Riwayat');
     try {
-        let respon = []
+        let respon = {}
         const user = await prisma.users.findUnique({
             where: {
                 id: Number(id_user)
@@ -118,10 +118,10 @@ const Riwayat = async (id_user, orders_id, payment_id, history_times) => {
         }
 
 
-        respon.push(user)
-        respon.push(post)
-        respon.push(payment)
-        respon.push(history)
+        respon.username = user.username
+        respon.judul = post.judul
+        respon.payment = payment.total_pembayaran
+        respon.history_time = history.history_time
 
         return respon
     } catch (err) {

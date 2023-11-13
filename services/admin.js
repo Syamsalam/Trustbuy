@@ -220,7 +220,7 @@ class AdminService {
             })
 
             jastip.nik = jastip.user_details.data_identifikasi
-            jastip.nomo_hp = jastip.user_details.nomor_telepon
+            jastip.nomor_hp = jastip.user_details.nomor_telepon
             jastip.alamat = jastip.user_details.alamat
 
             delete jastip.user_details
