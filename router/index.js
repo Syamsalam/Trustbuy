@@ -53,7 +53,7 @@ router.get('/test-server', auth, AuthController.serverTest);
 
 //user
 router.put('/user/update-user', auth, UserController.UpdateUser)
-router.get('/user/history-user', auth, HistoryController.HistoryUser)
+router.get('/user/history-user/:id', auth, HistoryController.HistoryUser)
 router.get('/user/history-user-detail', auth, HistoryController.HistoryUserDetails)
 router.get('/user/get-post-aktif', auth, UserController.getPostByStatus)
 router.get('/user/detail-profile', auth, UserController.GetUserDetail)

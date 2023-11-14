@@ -29,6 +29,7 @@ class ImageService {
                     console.log(err)
                 }
             }
+            console.log("Berhasil Lewat")
             const users = await prisma.image.upsert({
                 where: {
                     users_id: Number(user.id),

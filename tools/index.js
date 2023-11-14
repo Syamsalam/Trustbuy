@@ -35,23 +35,25 @@ const createUser = async (data, idRole) => {
     try {
 
         const user = await prisma.users.create({
-            email: data.email,
-            username: data.username,
-            password: generateHashedPassword(data.password),
-            role: {
-                connect: {
-                    id: Number(idRole)
-                }
-            },
-            user_details: {
-                create: {
-                    alamat: data.alamat,
-                    no_hp: data.no_hp,
-                    nama: data.nama,
-                    nomor_telepon: data.nomor_telepon,
-                    data_identifikasi: data.data_identifikasi ?? null,
+            data: {
+                email: data.email,
+                username: data.username,
+                password: generateHashedPassword(data.password),
+                role: {
+                    connect: {
+                        id: Number(idRole)
+                    }
                 },
-            },
+                user_details: {
+                    create: {
+                        alamat: data.alamat,
+                        no_hp: data.no_hp,
+                        nama: data.nama,
+                        nomor_telepon: data.nomor_telepon,
+                        data_identifikasi: data.data_identifikasi ?? null,
+                    },
+                },
+            }
 
         })
 
@@ -100,7 +102,7 @@ const Riwayat = async (id_user, orders_id, payment_id, history_times) => {
                 id: Number(orders.post_id)
             },
             select: {
-                judul:true,
+                judul: true,
             }
         })
 
@@ -109,7 +111,7 @@ const Riwayat = async (id_user, orders_id, payment_id, history_times) => {
                 id: Number(payment_id)
             },
             select: {
-                total_pembayaran:true,
+                total_pembayaran: true,
             }
         })
 

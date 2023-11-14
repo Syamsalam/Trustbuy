@@ -96,13 +96,13 @@ class HistoryService {
     }
 
     //ini ke user
-    static async historyUser(user) {
+    static async historyUser(id) {
         try{
             const history = await prisma.history.findMany({
                 where: {
                     OR: [
-                        {id_jastip:Number(user.id)},
-                        {id_user:Number(user.id)}
+                        {id_jastip:Number(id)},
+                        {id_user:Number(id)}
                     ]
                 },
                 include:{
