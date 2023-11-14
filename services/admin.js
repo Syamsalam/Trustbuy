@@ -164,16 +164,7 @@ class AdminService {
                         contains: search == null ? "" : search
                     }, 
                     saldo: null
-                },
-                select: {
-                    email: true,
-                    username: true,
-                    user_details: {
-                        select: {
-                            nomor_telepon: true
-                        }
-                    }
-                },
+                }
             })
 
 
@@ -190,7 +181,7 @@ class AdminService {
                     username: true,
                     user_details: {
                         select: {
-                            nomor_telepon: true
+                            nomor_telepon:true
                         }
                     }
                 },
@@ -213,7 +204,7 @@ class AdminService {
             return {
                 status:500,
                 message: "Gagal Mengambil semua data",
-                data: null
+                data: err.message
             }
         }
     }
