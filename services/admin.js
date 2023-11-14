@@ -242,12 +242,20 @@ class AdminService {
 
     static async updateSaldo(id,saldo) {
         try{
+            const saldos = await prisma.saldo.findUnique({
+                where: {
+                    jastiper_id: Number(id)
+                }
+            })
+
+            let updatedSaldo = saldos.saldo + saldo
+
             const saldoUpdate = await prisma.saldo.update({
                 where: {
                     jastiper_id: Number(id)
                 },
                 data: {
-                    saldo: Number(saldo)
+                    saldo: Number(updatedSaldo)
                 }
             })
 
