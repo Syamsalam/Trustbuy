@@ -239,6 +239,33 @@ class AdminService {
             }
         }
     }
+
+    static async updateSaldo(id,saldo) {
+        try{
+            const saldoUpdate = await prisma.saldo.update({
+                where: {
+                    jastiper_id: Number(id)
+                },
+                data: {
+                    saldo: Number(saldo)
+                }
+            })
+
+            return{
+                status:200,
+                message: "Berhasil Update Saldo",
+                data: saldoUpdate
+            
+            }
+        } catch(err) {
+            console.log(err)
+            return{
+                status:500,
+                message: "Gagal Update Saldo",
+                data: null
+            }
+        }
+    }
 }
 
 module.exports = AdminService;

@@ -128,6 +128,16 @@ class AdminController {
         }
     })
 
+    static updateSaldo = roleValidations(1, async (req,res,next) => {
+        try {
+            const {id,saldo} = req.body
+            const jastip = await AdminService.updateSaldo(id,saldo)
+            return handleServerResponse(res,jastip.status,jastip.message,jastip.data);
+        } catch(err) {
+            next(err)
+        }
+    })
+
 }
 
 module.exports = AdminController

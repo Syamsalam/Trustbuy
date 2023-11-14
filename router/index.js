@@ -123,6 +123,7 @@ router.get('/admin/all-jastip', auth, AdminController.Alljastip);
 router.get('/admin/all-product', auth, AdminController.GetAllProduct);
 router.get('/admin/get-all-post', auth, AdminController.allPost);
 router.put('/admin/validasi-jastip', auth, Admin.validateJastip);
+router.put('/admin/update-saldo', auth, AdminController.updateSaldo);
 
 router.get("/gambar/**", (req, res) => {
     res.sendFile(path.join(__dirname, `../images/photoprofile/${req.params[0]}`));
