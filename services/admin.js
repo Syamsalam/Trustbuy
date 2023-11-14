@@ -157,6 +157,26 @@ class AdminService {
 
     static async verifyJastip(page,search) {
         try {
+            const count = await prisma.users.count({
+                where: {
+                    role_id: 3,
+                    username: {
+                        contains: search == null ? "" : search
+                    }, 
+                    saldo: null
+                },
+                select: {
+                    email: true,
+                    username: true,
+                    user_details: {
+                        select: {
+                            nomor_telepon: true
+                        }
+                    }
+                },
+            })
+
+
             const jastip = await prisma.users.findMany({
                 where: {
                     role_id: 3,
@@ -187,7 +207,7 @@ class AdminService {
             return{
                 status:200,
                 message: "Berhasil Mengambil Semua Data",
-                data: jastip
+                data: {users : jastip, count}
             }
         } catch(err) {
             return {
@@ -270,7 +290,7 @@ class AdminService {
             return{
                 status:500,
                 message: "Gagal Update Saldo",
-                data: null
+                data: err
             }
         }
     }
