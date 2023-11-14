@@ -177,6 +177,7 @@ class AdminService {
                     saldo: null
                 },
                 select: {
+                    id : true,
                     email: true,
                     username: true,
                     user_details: {
