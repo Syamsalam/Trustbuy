@@ -8,8 +8,23 @@ class PostService {
             const user = await prisma.users.findUnique({
                 where: {
                     id: Number(users.id)
+                },
+                include: {
+                    saldo: {
+                        select: {
+                            saldo: true,
+                        }
+                    }
                 }
-             })
+            })
+
+            if(user.saldo.saldo < 10000) {
+                return {
+                    status: 204,
+                    message: "Saldo anda kurang dari 10000",
+                    data: null
+                }
+            }
 
              let createdPost = _data
 
