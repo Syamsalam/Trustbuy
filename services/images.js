@@ -49,7 +49,7 @@ class ImageService {
                 data: users
             }
         } catch (err) {
-            console.log(err , 'ini error');
+            console.error(err , 'ini error');
             return {
                 status: 500,
                 message: "Gagal Update Image Profile",

@@ -35,12 +35,11 @@ class CommonController {
                 sharp(fs.readFileSync(image.filepath)).webp({ quality: 50 }).toFile("images/photoprofile/" + filename)
 
 
-
                 const upload = await ImageService.uploadProfile(filename, req.user)
 
                 res.status(upload.status).json(upload)
             } catch (err) {
-                console.log(err);
+                console.error(err);
                 res.status(500).json(err)
             }
 
