@@ -32,7 +32,7 @@ class CommonController {
 
                 const filename = image.newFilename + ".webp"
 
-                sharp(fs.readFileSync(image.filepath)).webp({ quality: 50 }).toFile("images/photoprofile/" + filename)
+                await sharp(fs.readFileSync(image.filepath)).webp({ quality: 50 }).toFile("images/photoprofile/" + filename)
 
 
                 const upload = await ImageService.uploadProfile(filename, req.user)

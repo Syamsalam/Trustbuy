@@ -126,7 +126,7 @@ router.put('/admin/validasi-jastip', auth, Admin.validateJastip);
 router.put('/admin/update-saldo', auth, AdminController.updateSaldo);
 
 router.get("/gambar/**", (req, res) => {
-    res.sendFile(path.join(__dirname, `../images/photoprofile/${req.params[0]}`));
+    res.sendFile(path.join(`images/photoprofile/${req.params[0]}`));
 })
 
 
