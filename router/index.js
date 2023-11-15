@@ -85,7 +85,7 @@ router.post('/jastip/create-product', auth, ProducController.CreateProduct)
     .put('/jastip/update-post', auth, JastipController.updatePost)
     .get('/jastip/get-post', auth, JastipController.getPost)
     .get('/jastip/get-post/:id', auth, JastipController.getPostId)
-    .delete('/jastip/delete-post/:id',auth, JastipController.deletePost)
+    .put('/jastip/delete-post/:id',auth, JastipController.deletePost)
 
     .get('/jastip/detail-profile', auth, JastipController.GetJastipDetails)
     .put('/jastip/update-user', auth, JastipController.UpdateJastip)
