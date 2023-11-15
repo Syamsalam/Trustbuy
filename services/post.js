@@ -61,11 +61,19 @@ class PostService {
 
     static async deletePost(id) {
         try {
-            const post = await prisma.jastiper_post.delete({
+            
+            const post = await prisma.jastiper_post.update({
                 where: {
                     id: Number(id)
+                },
+                data: {
+                    status: "Delete",
+                    aktif: "non_aktif",
                 }
             })
+
+
+
             return {
                 status: 200,
                 message: "Berhasil Menghapus Post",
@@ -75,7 +83,7 @@ class PostService {
             return {
                 status: 500,
                 message: "Gagal Menghapus Post",
-                data: null
+                data: err.message
             }
         }
     }
@@ -84,7 +92,8 @@ class PostService {
         try {
             const post = await prisma.jastiper_post.findMany({
                 where: {
-                    user_id: Number(user.id)
+                    user_id: Number(user.id),
+                    status: "Aktif"
                 }
             })
             
@@ -152,7 +161,8 @@ class PostService {
         try {
             const user = await prisma.jastiper_post.findMany({
                 where: {
-                    aktif: "aktif"
+                    aktif: "aktif",
+                    status: "Aktif"
 
                 },  
                 include: {
@@ -227,7 +237,8 @@ class PostService {
 
                 const post = await prisma.jastiper_post.findMany({
                     where: {
-                        user_id: Number(user.id)
+                        user_id: Number(user.id),
+                        status: "Aktif"
                     },
                     select: {
                         aktif: true
@@ -264,7 +275,8 @@ class PostService {
             
             const prev = await prisma.users.findFirst({
                 where: {
-                    id: Number(user.id)   
+                    id: Number(user.id)
+
                 },
                 select : {
                     id: true,
@@ -286,7 +298,8 @@ class PostService {
                     where: {
                         users: {
                             id: prev.id
-                        }
+                        },
+                        status: "Aktif"
                     },
                     data: {
                         aktif: "non_aktif"
@@ -303,7 +316,8 @@ class PostService {
                     where : {
                         users : {
                             id: Number(user.id)
-                        }
+                        },
+                        status: "Aktif"
                     },
                     data : {
                         aktif : prev.jastiper_post[0].aktif == "aktif" ? "non_aktif" : "aktif"

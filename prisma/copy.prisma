@@ -185,9 +185,9 @@ model chatt {
 }
 
 model saldo {
-  jastiper_id Int     @id
-  saldo       BigInt?
-  users       users   @relation(fields: [jastiper_id], references: [id], onUpdate: Restrict, map: "saldo_ibfk_1")
+  jastiper_id Int   @id
+  saldo       Int?
+  users       users @relation(fields: [jastiper_id], references: [id], onUpdate: Restrict, map: "saldo_ibfk_1")
 }
 
 enum jastiper_post_aktif {

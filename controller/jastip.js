@@ -59,6 +59,15 @@ class JastipController {
         }
     })
 
+    static deletePost = roleValidations(3, async (req,res,next) => {
+        try{
+            const jastip = await PostService.deletePost(req.params.id);
+            return handleServerResponse(res,jastip.status,jastip.message,jastip.data);
+        } catch (err) {
+            next(err);
+        }
+    })
+
     static GetJastipDetails = roleValidations(3, async (req, res , next) => {
         try{
             const user = await JastipService.getDetailProfile(req.user);

@@ -144,15 +144,16 @@ model history {
 }
 
 model jastiper_post {
-  id          Int                 @id @default(autoincrement())
+  id          Int                  @id @default(autoincrement())
   user_id     Int?
-  judul       String              @unique(map: "judul") @db.VarChar(255)
-  deskripsi   String?             @db.Text
-  lokasi      String?             @db.Text
-  waktu_mulai DateTime?           @db.Time(0)
-  waktu_akhir DateTime?           @db.Time(0)
-  aktif       jastiper_post_aktif @default(aktif)
-  users       users?              @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "jastiper_post_ibfk_1")
+  judul       String               @unique(map: "judul") @db.VarChar(255)
+  deskripsi   String?              @db.Text
+  lokasi      String?              @db.Text
+  waktu_mulai DateTime?            @db.Time(0)
+  waktu_akhir DateTime?            @db.Time(0)
+  aktif       jastiper_post_aktif  @default(aktif)
+  status      jastiper_post_status @default(Aktif)
+  users       users?               @relation(fields: [user_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "jastiper_post_ibfk_1")
   orders      orders[]
 
   @@index([user_id], map: "user_id")
@@ -198,4 +199,9 @@ enum jastiper_post_aktif {
 enum orders_verification {
   pending
   confirm
+}
+
+enum jastiper_post_status {
+  Aktif
+  Delete
 }
