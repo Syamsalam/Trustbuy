@@ -182,7 +182,9 @@ class AdminService {
                     username: true,
                     user_details: {
                         select: {
-                            nomor_telepon:true
+                            nomor_telepon: true,
+                            data_identifikasi: true,
+                            alamat: true
                         }
                     }
                 },
@@ -193,6 +195,8 @@ class AdminService {
 
             jastip.forEach(jast => {
                 jast.nomor_telepon = jast.user_details.nomor_telepon
+                jast.alamat = jast.user_details.alamat
+                jast.nik = jast.user_details.data_identifikasi
                 delete jast.user_details
             })
 
